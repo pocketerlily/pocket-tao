@@ -206,31 +206,6 @@ Wallet operations need Python with `bittensor==11.3.2` (`--python PATH`, `POCKET
 
 </details>
 
-<details>
-<summary><b>4 · Reveal after the cutoff, then verify</b></summary>
-
-<br>
-
-Make the repository public within the reveal window: 300 finalized blocks after the cutoff,
-about one hour. Then check it exactly the way a validator will, anonymously:
-
-```bash
-./pocket-miner verify-remote "${identity[@]}" --repo "$REPO"
-```
-
-| Result | Meaning |
-| --- | --- |
-| `ok` | Validators can fetch it and it matches your commitment. |
-| `not_public` | Check visibility, branch and file path. |
-| `mismatch` / `invalid` | The uploaded bytes differ from the packed source or the round's base image. |
-| `unreachable` | Retry the download. |
-
-A repository still private after the window is out for that round. Keep the file available at
-the same path while the submission is competing or holding the title. Outages on Hugging Face's
-side are retried and are not held against you.
-
-</details>
-
 ## Round parameters
 
 | Parameter | Value |
