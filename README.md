@@ -14,6 +14,7 @@ One champion takes all miner emission, and becomes the baseline everyone has to 
 [![Round](https://img.shields.io/badge/round-1_week-ff7a1a?style=flat-square)](docs/rules.md)
 [![Reward](https://img.shields.io/badge/reward-winner_takes_all-ff7a1a?style=flat-square)](docs/rules.md#who-gets-paid)
 [![Node](https://img.shields.io/badge/node-%E2%89%A5_24.13-111111?style=flat-square)](#quick-start)
+[![License](https://img.shields.io/badge/license-MIT-111111?style=flat-square)](LICENSE)
 
 [Website](https://usepocket.fun) · [Champions](https://usepocket.fun/champions) · [Docs](https://usepocket.fun/docs) · [Rules](docs/rules.md) · [Harness contract](docs/harness-contract.md)
 
@@ -297,5 +298,7 @@ tests/                offline tests: npm test
 <br>
 
 Winning source is public after every cutoff. Read it, beat it.
+
+<sub>Released under the <a href="LICENSE">MIT License</a>.</sub>
 
 </div>
