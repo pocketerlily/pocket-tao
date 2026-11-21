@@ -1,0 +1,94 @@
+#!/usr/bin/env node
+import { execFile } from 'node:child_process';
+import { setTimeout as delay } from 'node:timers/promises';
+import { fileURLToPath } from 'node:url';
+import { parseArgs } from 'node:util';
+import { defaultPython } from '../lib/wallet.mjs';
+import { readConfig } from './config.mjs';
+import { checkDocument, checkSnapshot, checkTime } from './checks.mjs';
+import { allocate } from './epoch.mjs';
+
+const helper = fileURLToPath(new URL('./chain.py', import.meta.url));
+const python = process.env.POCKET_VALIDATOR_PYTHON || defaultPython;
+
+function chainCall(request) {
+  return new Promise(resolve => {
+    const child = execFile(python, ['-IB', helper], { timeout: 120_000, killSignal: 'SIGKILL', maxBuffer: 65536 },
+      (error, stdout) => {
+        if (error?.code === 'ENOENT') return resolve({ error: 'sdk_unavailable' });
+        if (!error) {
+          try {
+            const response = JSON.parse(stdout);
+            if (Object.hasOwn(response, 'value')) return resolve({ value: response.value });
+            if (['sdk_unavailable', 'wallet_unavailable', 'chain_unavailable', 'chain_changed',
+              'result_stale', 'result_in_future', 'validator_not_registered', 'validator_permit_required',
+              'rate_limited', 'outcome_unknown'].includes(response.error)) return resolve({ error: response.error });
+          } catch {}
+        }
+        resolve({ error: request.method === 'submit' ? 'outcome_unknown' : 'chain_unavailable' });
+      });
+    child.stdin.on('error', () => {});
+    child.stdin.end(JSON.stringify(request));
+  });
+}
+
+async function poll(config, command) {
+  const report = { champion: null, weights: [], checks: {}, wouldWrite: false, status: 'results_unavailable' };
+  let doc;
+  try {
+    const response = await fetch(config.resultsUrl, {
+      redirect: 'error', credentials: 'omit', signal: AbortSignal.timeout(30_000),
+    });
+    if (!response.ok) {
+      await response.body?.cancel();
+      return report;
+    }
+    doc = await response.json();
+  } catch (error) {
+    if (error instanceof SyntaxError) {
+      report.checks.document = false;
+      report.status = 'invalid_document';
+    }
+    return report;
+  }
+  if (!checkDocument(doc, config, report)) return report;
+  const request = { network: config.network, netuid: config.netuid, wallet: config.wallet,
+    championHotkey: report.champion?.hotkey ?? null };
+  const snapshot = await chainCall({ ...request, method: 'inspect' });
+  if (snapshot.error) return { ...report, status: snapshot.error, checks: { ...report.checks, chain: false } };
+  if (!checkSnapshot(snapshot.value, report) || !checkTime(doc.generatedAt, config, report)) return report;
+  if (!report.weights.length) return { ...report, status: 'no_target' };
+  const submit = () => chainCall({ ...request, method: 'submit', allowWrites: config.allowWrites,
+    expected: snapshot.value, weights: report.weights, generatedAt: doc.generatedAt,
+    maxResultAgeSeconds: config.maxResultAgeSeconds });
+  try {
+    return await allocate(config, command, snapshot.value, report, submit);
+  } catch {
+    return { ...report, status: 'state_unavailable' };
+  }
+}
+
+async function main() {
+  const [command, ...args] = process.argv.slice(2);
+  let options;
+  try {
+    if (!['status', 'run'].includes(command)) throw Error();
+    options = parseArgs({ args, options: { config: { type: 'string' }, once: { type: 'boolean' } } }).values;
+    if (!options.config || (options.once && command !== 'run')) throw Error();
+  } catch {
+    console.error('Usage: pocket-validator status --config FILE | run --config FILE [--once]');
+    process.exitCode = 1;
+    return;
+  }
+  const config = await readConfig(options.config);
+  do {
+    console.log(JSON.stringify(await poll(config, command)));
+    if (command === 'status' || options.once) return;
+    await delay(config.pollSeconds * 1000);
+  } while (true);
+}
+
+main().catch(() => {
+  console.error('Unable to read validator configuration');
+  process.exitCode = 1;
+});

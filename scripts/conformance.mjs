@@ -1,8 +1,9 @@
 // Developer-only. Imports trusted code from the supplied checkouts. The CLI, the
 // minimal guest and npm test have no dependency on this script or either checkout.
 import assert from 'node:assert/strict';
-import { execFileSync } from 'node:child_process';
+import { execFileSync, spawn } from 'node:child_process';
 import { createHash } from 'node:crypto';
+import { once } from 'node:events';
 import { readFile } from 'node:fs/promises';
 import { registerHooks } from 'node:module';
 import { join, resolve } from 'node:path';
@@ -60,6 +61,19 @@ function admission(label, bytes) {
   pass(label);
 }
 admission('minimal bundle admitted with matching source, recipe and lock digests', source);
+
+const { waitForActivationMarker } = await import(url(platform, 'packages/sandbox/src/activation.ts'));
+const guest = spawn(process.execPath, [join(project, 'harness.mjs')], {
+  env: { POCKET_ACTIVATION_REQUIRED: '1' }, stdio: ['ignore', 'pipe', 'pipe']
+});
+const closed = once(guest, 'close');
+try {
+  await waitForActivationMarker(guest, 'minimal', AbortSignal.timeout(5000));
+  pass('platform recognizes the minimal guest standby signal');
+} finally {
+  guest.kill();
+  await closed;
+}
 
 // Include binary bytes, two packages and out-of-order paths. This test works
 // without a pre-existing install tree, any provisioning profile or a build host.

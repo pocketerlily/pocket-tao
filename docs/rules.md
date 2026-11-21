@@ -25,9 +25,33 @@ Upload the canonical source bytes to `pocket/<hex>.json` on the `main` branch of
 
 Validators fetch anonymously and check the canonical bytes and the base image against the original build round. They hash the downloaded bytes and recompute the ID using the subnet, committing hotkey and original round digest. A private or missing file can still be revealed within the window. After the window, a file that remains private or missing disqualifies the submission for that round.
 
+## Eligibility gate
+
+The gate uses deterministic model replays. Every submission must pass both checks to enter scoring for the round.
+
+1. Pass all four web-agent scenes. Search for a source and read it, interact with a dynamic page, treat a prompt injection on a page as untrusted content, and pause for user takeover. A failure in any scene disqualifies the submission for the round with reason `gate_failed`.
+2. Pass production start. The worker starts the Harness in activation mode, checkpoints it while it waits, then restores and activates it. The restored Harness must serve one scene. A failure disqualifies the submission for the round with reason `activation_unsupported`. [Production start contract](harness-contract.md#production-start)
+
+## Scored tasks
+
+Each round has 24 generated research tasks by default, six in each tier. The operator chooses a live model that answers through the standard model interface. Every eligible submission gets the same tasks, model and budgets. The generator uses the SHA-256 seed `sha256("pocket-weekly-tasks-v1\n" + JSON.stringify([roundId, cutoffBlockHash]))`, with one LF byte after `v1` and compact UTF-8 JSON. The cutoff block hash makes the tasks unknowable before the cutoff and reproducible afterwards.
+
+| Tier | What the Harness must do | Tool requests per task | Model calls per task | Tokens per task |
+| --- | --- | ---: | ---: | ---: |
+| `single` | Search and read one page for the answer. | 4 | 4 | 100,000 |
+| `distractors` | Find and read the relevant page among misleading results. | 8 | 7 | 200,000 |
+| `multi-hop` | Read two pages and add the two values. | 8 | 7 | 200,000 |
+| `long-page` | Follow the read cursor to find the value further down a page. | 8 | 7 | 200,000 |
+
+The budgets are upper limits. A single-tier task allows 180 seconds and every other tier 300 seconds. Each model call can return at most 1,024 tokens. The final reply must contain only the answer as a decimal whole number. The validator also checks that the required search and page reads actually happened. In a real run, a model claimed it had searched but never called the search tool and earned zero for the task. Make sure the Harness sends the tool requests.
+
+Each passing task earns one point. A wrong answer, missing evidence or an exhausted task budget earns zero for that task alone. A crash or protocol violation disqualifies the submission for the round. Under the default schedule the score is the number of passed tasks divided by 24. The highest positive score wins, with ties going to the earlier commitment.
+
+The operator's generator also produced the practice set. Each entry in `tasks` has a `question` for the model, a search `query`, the search `results` and the `pages` available to read. Compare the final reply with `expectedAnswer`. The `tier` identifies the task type and `budgets` lists its tool, time and model limits. [Practice set](../practice/practice-set.json)
+
 ## How settlement works
 
-Validators settle sequentially from round zero. Each listed submission needs a complete score or a recorded disqualification for that round. An empty list can settle immediately. The current engineering score is passed cases divided by all cases.
+Validators settle sequentially from round zero. Each listed submission needs a complete score or a recorded disqualification for that round. An empty list can settle immediately.
 
 | Outcome | Consequence |
 | --- | --- |
@@ -36,8 +60,8 @@ Validators settle sequentially from round zero. Each listed submission needs a c
 | `source_unavailable` | Disqualify for this round when the file is still private or missing after the reveal window. |
 | Hugging Face outage | Retry. An outage on Hugging Face's side does not count against the miner, including after the reveal window. |
 | Source build fails or the build produces an invalid artifact | Disqualify the submission for this round and record the cause. |
-| A case completes with a wrong answer or behavior | Fail that case. Other case scores still count. |
-| Guest crashes, violates the protocol, gives malformed output or exceeds its execution time, step or resource budget | Fail that case and disqualify the submission for this round, including when earlier cases passed. |
+| Scored task ends with a wrong answer, missing evidence or an exhausted task budget | Award zero points for this task. Continue scoring the other tasks. |
+| Guest crashes or violates the protocol | Disqualify the submission for this round, including when earlier tasks passed. |
 | Worker isolation failure, validator restart or abort, unavailable host or dependency, or no attributable result | Keep the submission eligible and retry. |
 
 The default infrastructure attempt limit is three, configurable to a positive safe integer. Replays at the same finalized height count at most once per submission. At the limit, mark a submission `not_evaluable` only once at least one other submission has a complete score, including zero. Individual passed cases do not establish a complete score. With infrastructure failures and no scored submission, keep the prior champion, alert and continue retrying even beyond the limit. A field entirely disqualified by attributable participant errors settles as an empty round. Reasons stay with that round.
@@ -51,4 +75,4 @@ The default infrastructure attempt limit is three, configurable to a positive sa
 
 ## Still undecided
 
-The formal ranking metric, hidden benchmarks, fees, multi-validator review, minimum entry qualifications, public submission endpoint and production revenue sharing remain open.
+Fees, multi-validator review, a public submission endpoint and production revenue sharing remain open.

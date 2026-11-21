@@ -81,11 +81,12 @@ Put `pocket.json` in the project root and list every file that should enter the 
 | Location | Purpose |
 | --- | --- |
 | `pocket-miner`, `lib/` | Pack and check source, derive rounds and submission IDs, sign, commit and deliver. |
+| [Public validator](validator/README.md) | Check the published champion on chain, preview the allocation and set weights. |
 | `examples/minimal/` | Editable built-ins-only agent, build recipe and sandbox instructions. |
 | `docs/` | Source and runtime contract, weekly competition and reward rules. |
 | `tests/` | Run `npm test` offline. No wallet, Python SDK, chain or sandbox required. |
 | `scripts/conformance.mjs` | Developer-only platform comparison. Miners can use the kit without this script or a platform checkout. |
 
-The weekly rules explain cutoff, automatic carry-over, disqualifications and champion selection. [Competition rules](docs/rules.md)
+The minimal example supports cold starts and the checkpoint-and-restore production start used by the weekly eligibility gate. The gate checks four web-agent scenes and one scene after restore. Use the generated practice set to try the research tasks that determine the ranking. [Weekly rules](docs/rules.md) · [Practice set](practice/practice-set.json)
 
 Developers with a trusted platform Git checkout and its local dependencies can run `npm run conformance -- --platform "$PLATFORM"`. The optional `--baseline "$BASELINE"` compares an external reference project's prepared source tree, in memory, with its own packer. Supply `--base-image-digest "$BASE"` to compare at a deployed image digest. The comparison defaults to the all-zero practice digest. No reference source is distributed with the kit.

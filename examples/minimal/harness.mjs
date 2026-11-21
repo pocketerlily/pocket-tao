@@ -1,8 +1,9 @@
-// A cold-start, single-turn agent. Both connections go to the worker over Unix sockets.
+// A single-turn agent. Both connections go to the worker over Unix sockets.
 import http from 'node:http';
 import net from 'node:net';
-import { randomUUID } from 'node:crypto';
+import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
+import { setTimeout as delay } from 'node:timers/promises';
 
 const KiB = 1024;
 const modelPath = '/v1/model/stream';
@@ -124,18 +125,27 @@ export async function answer(session, input, exchange = gateway) {
   throw Error('run_step_limit');
 }
 
+async function readActivation(wait) {
+  if (wait) process.stdout.write('{"pocketStartup":"activation-wait"}\n');
+  for (;;) {
+    try {
+      return JSON.parse(await readFile('/channels/activation.json', 'utf8'));
+    } catch (error) {
+      // The host may still be creating or writing the file.
+      if (!wait || (error.code !== 'ENOENT' && !(error instanceof SyntaxError))) throw error;
+      await delay(25);
+    }
+  }
+}
+
 async function start() {
-  // Cold runs mount the activation record before starting Node. Restored or
-  // warm instances require a different wait/handshake and are outside this example.
   if (process.env.POCKET_CLUSTER_ACTIVATION === '1') throw Error('Cluster activation unsupported');
-  const activation = JSON.parse(await readFile('/channels/activation.json', 'utf8'));
-  if (activation.version !== 1 || !activation.runId || !activation.taskId) throw Error('Invalid activation');
   let session;
   const control = http.createServer(async (req, res) => {
     try {
       let reply;
       if (req.method === 'GET' && req.url === '/v1/health') {
-        reply = { ready: true };
+        reply = health;
       } else {
         if (req.method !== 'POST') throw Error('guest_protocol_error');
         const body = JSON.parse(await readBody(req, 32 * KiB));
@@ -159,6 +169,18 @@ async function start() {
     }
   });
   control.keepAliveTimeout = 60000;
+
+  const required = process.env.POCKET_ACTIVATION_REQUIRED === '1';
+  const activation = await readActivation(required);
+  if (activation.version !== 1 || !activation.runId || !activation.taskId) throw Error('Invalid activation');
+  const health = { ready: true };
+  if (required) {
+    const { instanceId, entropy, runId, taskId } = activation;
+    if (![instanceId, entropy, runId, taskId].every(value => typeof value === 'string')) throw Error('Invalid activation');
+    health.instanceId = instanceId;
+    health.instanceNonce = createHash('sha256').update(randomBytes(32)).update(entropy).digest('hex');
+  }
+
   // The worker owns the listener. Serve HTTP on this already-connected socket.
   const channel = net.createConnection('/channels/control.sock');
   channel.once('connect', () => control.emit('connection', channel));

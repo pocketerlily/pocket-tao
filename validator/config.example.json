@@ -1,0 +1,13 @@
+{
+  "network": "test",
+  "netuid": 1,
+  "resultsUrl": "https://YOUR_RESULTS_HOST/champions.json",
+  "wallet": {
+    "name": "validator",
+    "hotkey": "default",
+    "path": "~/.bittensor/wallets"
+  },
+  "allowWrites": false,
+  "pollSeconds": 600,
+  "maxResultAgeSeconds": 7200
+}

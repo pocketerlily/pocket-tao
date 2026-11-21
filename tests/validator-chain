@@ -1,0 +1,65 @@
+#!/usr/bin/env python3
+"""Fake the SDK transport and signer while exercising the real chain helper."""
+import importlib.metadata
+import json
+import os
+import runpy
+import sys
+from types import SimpleNamespace
+
+
+state = json.loads(os.environ["TEST_SUBNET"])
+
+
+class Client:
+    def __init__(self, network, **options):
+        assert network == "test"
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, *args):
+        pass
+
+    async def finalized_block(self):
+        return state["block"]
+
+    async def at(self, block):
+        assert block == state["block"]
+        self.block = block
+        return self
+
+    async def read(self, name, *, netuid, **kwargs):
+        assert netuid == 1
+        if name == "neurons":
+            return [SimpleNamespace(**neuron) for neuron in state["neurons"]]
+        if name == "epoch_status":
+            return {"tempo": state["tempo"], "epoch_index": state["epoch"]}
+        assert name == "weights_rate_limit"
+        return state["rateLimit"]
+
+    async def query(self, storage, args):
+        assert args == [1]
+        return {"cap": state["maxWeight"], "version": 9}[storage]
+
+    async def execute(self, intent, wallet, *, retries):
+        assert retries == 0 and intent["version_key"] == 9 and intent["netuid"] == 1
+        with open("submissions.jsonl", "a") as log:
+            print(json.dumps(intent["weights"]), file=log)
+        if state.get("loseReply"):
+            os._exit(1)
+        return SimpleNamespace(raise_for_failure=lambda: None)
+
+
+def public_view(wallet, role):
+    assert role == "hotkey"
+    print("test-private-diagnostic", file=sys.stderr)
+    print("test-private-diagnostic")
+    return SimpleNamespace(ss58_address=state["signer"])
+
+
+storage = SimpleNamespace(MaxWeightsLimit="cap", WeightsVersionKey="version")
+sys.modules["bittensor"] = SimpleNamespace(Wallet=dict, public_view=public_view, Client=Client,
+    SetWeights=dict, ChainError=RuntimeError, storage=SimpleNamespace(SubtensorModule=storage))
+importlib.metadata.version = lambda name: "11.3.2"
+runpy.run_path(sys.argv[-1], run_name="__main__")

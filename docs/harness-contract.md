@@ -70,11 +70,11 @@ Builds run offline in gVisor/KVM on Linux/amd64 as UID/GID 65532 with zero capab
 
 On a cold single-host run the worker starts `/usr/local/bin/node` on the installed runtime entrypoint, with working directory `/tmp`. Resolve module imports relative to the entrypoint. The runtime uses the build's user and CPU, memory, process and descriptor limits, with 16 MiB of temporary storage. The application and root filesystem are read-only. Durable workspace files live behind the state gateway.
 
-The worker mounts per-run channels. With `POCKET_ACTIVATION_REQUIRED=1`, read the version-1 activation record at `/channels/activation.json`, binding the run and task IDs. Connect outward to `/channels/control.sock` and serve HTTP on that single persistent connection. The host sends the following requests.
+The worker mounts per-run channels. Read the activation record at `/channels/activation.json` and bind the run and task IDs. On a cold start the record is already present. With `POCKET_ACTIVATION_REQUIRED=1`, follow the standby and restore sequence below. After activation, connect outward to `/channels/control.sock` and serve HTTP on that single persistent connection. The host sends the following requests. [Production start](#production-start)
 
 | Request | Body and response |
 | --- | --- |
-| `GET /v1/health` | Reply with `{"ready":true}` within 10 s. Advertise `contextVersion:2`, `workspaceEdit:true` or `trailingCompaction:true` only if implemented. |
+| `GET /v1/health` | Return `ready: true` within 10 s. Production start also requires `instanceId` and `instanceNonce`. Advertise `contextVersion:2`, `workspaceEdit:true` or `trailingCompaction:true` only if implemented. |
 | `POST /v1/session` | One `0.1-draft` session with run/task/event IDs, artifact digest, time, recorded actions and capability flags. The optional model specifies alias, max output tokens and optional step limit. Restore required context before returning `{"ready":true}`. Negotiated sessions can request `compactAfterAnswer:true`. |
 | `POST /v1/message` | Receives a JSON string. Return exactly `{"status":"completed","text":"..."}` or `{"status":"waiting","text":"..."}` with nonempty text. Use waiting for an outstanding user action. |
 | `POST /v1/event` | Receives a recorded action including ID, operation, parameters, status and receipt. Resume using recorded outcomes and return the same reply shape. |
@@ -93,11 +93,27 @@ Send HTTP POSTs on `/channels/gateway.sock` with UTF-8 JSON, `Content-Type: appl
 
 A single-host run admits up to 128 gateway requests, eight simultaneous gateway sockets and one request per socket. Ordinary bodies and replies fit in 32 KiB, workspace edit requests in 48 KiB and model requests in 128 KiB. Model output is limited to 1 MiB per stream and 64 KiB per line. Model requests allow 1–64 messages, up to 16,384 characters of content each and 1–4,096 requested output tokens. The per-run model-step limit is 2–32, default 12, including context work. The host separately enforces route, token, cost and concurrency budgets. Request headers and receipt have 2 s timeouts. Tool abort deadlines are 9 s for ordinary tools, 15 s for browser operations and 24 s for calendar lists. Model provider attempts default to 45 s unless the route overrides that value.
 
-## Production startup requirements
+## Production start
 
-A checkpoint-required single-host worker prepares a clean guest that signals standby with a stdout JSON record containing `"pocketStartup":"activation-wait"` before it acquires a session or host connection. On restore, wait for a fresh activation, bind its run/task/instance and entropy, and return its `instanceId` plus a fresh 64-hex-character `instanceNonce` at health. The worker verifies the template and response.
+With `POCKET_ACTIVATION_REQUIRED=1`, finish process startup, write the following line exactly once to stdout, including its terminating newline, and wait.
 
-Cluster workers use one-time warm pods. With `POCKET_CLUSTER_ACTIVATION=1`, signal clean standby and read a fresh newline-delimited activation on stdin. It binds pool, run, execution epoch, pod, instance, entropy, CA, leased gateway addresses and a short-lived token. Interactive control uses numbered stdin requests (`session`, `turn`, `event`, optional `compact`) and stdout health, text, reply or failure records. Bind replies to their request ID. Send calls only to the activated model, tool and memory gateways over authenticated TLS with the supplied CA, bearer lease and run binding. Warm admission and activation are required for cluster deployment. A cold-only example cannot satisfy either a warm cluster or a restore-required worker.
+```json
+{"pocketStartup":"activation-wait"}
+```
+
+The host may checkpoint the whole waiting process and restore a copy. Until activation, keep the control and gateway connections closed and create no values derived from randomness, time or run identity. This keeps restored copies from inheriting a nonce or other per-run state.
+
+The host activates the process by writing `/channels/activation.json`. The record has numeric version 1 and four string fields, as in this example.
+
+```json
+{"version":1,"instanceId":"instance-a","entropy":"host-supplied-entropy","runId":"run-a","taskId":"task-a"}
+```
+
+Wait for the file to appear and read it before serving any requests. Bind the session to its `runId` and `taskId`. Generate the instance nonce now, mixing fresh randomness drawn after activation with the file's `entropy`. On every `GET /v1/health`, return `ready: true`, the file's exact `instanceId`, and the same `instanceNonce` for this activation, encoded as 64 lowercase hexadecimal characters.
+
+### Cluster workers
+
+Cluster workers use one-time warm pods. With `POCKET_CLUSTER_ACTIVATION=1`, signal clean standby and read a fresh newline-delimited activation on stdin. It binds pool, run, execution epoch, pod, instance, entropy, CA, leased gateway addresses and a short-lived token. Interactive control uses numbered stdin requests (`session`, `turn`, `event`, optional `compact`) and stdout health, text, reply or failure records. Bind replies to their request ID. Send calls only to the activated model, tool and memory gateways over authenticated TLS with the supplied CA, bearer lease and run binding. Warm admission and activation are required for cluster deployment.
 
 ## Submission and rejection
 

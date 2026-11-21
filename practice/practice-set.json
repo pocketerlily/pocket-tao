@@ -1,0 +1,889 @@
+{
+  "profile": "agent-facts-v3",
+  "seed": "7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c",
+  "count": 24,
+  "tasks": [
+    {
+      "id": "weekly-1",
+      "tier": "single",
+      "budgets": {
+        "toolCalls": 4,
+        "maxRunMs": 180000,
+        "model": {
+          "calls": 4,
+          "tokens": 100000,
+          "costNanos": 1000000000000,
+          "concurrency": 1
+        }
+      },
+      "question": "Look up the count for Rowan-7fb782 Bay, in crates. You must use your web search tool exactly once with the exact query \"station records Rowan-7fb782\". Read the result pages you need. Reply with only the whole number.",
+      "query": "station records Rowan-7fb782",
+      "results": [
+        {
+          "url": "https://register.example/76b9dbffb66cd7e0e0ef6103",
+          "title": "Rowan-7fb782 Bay register",
+          "description": "Survey log for Rowan-7fb782 Bay."
+        }
+      ],
+      "pages": [
+        {
+          "url": "https://register.example/76b9dbffb66cd7e0e0ef6103",
+          "text": "Survey log for Rowan-7fb782 Bay.\nRowan-7fb782 Bay | crates = 676\nVerified at annual close."
+        }
+      ],
+      "expectedAnswer": "676"
+    },
+    {
+      "id": "weekly-2",
+      "tier": "distractors",
+      "budgets": {
+        "toolCalls": 8,
+        "maxRunMs": 300000,
+        "model": {
+          "calls": 7,
+          "tokens": 200000,
+          "costNanos": 1000000000000,
+          "concurrency": 1
+        }
+      },
+      "question": "Look up the count for Linden-ec92b8 Grove, in samples. You must use your web search tool exactly once with the exact query \"annual inventory Linden-ec92b8\". Read the result pages you need. Reply with only the whole number.",
+      "query": "annual inventory Linden-ec92b8",
+      "results": [
+        {
+          "url": "https://register.example/8750416f65c6705756c36f6f",
+          "title": "Linden-ec92b8 Ridge register",
+          "description": "Inventory ledger for Linden-ec92b8 Ridge."
+        },
+        {
+          "url": "https://register.example/46a4f90c0ff8f9f253697674",
+          "title": "Linden-ec92b8 Annex register",
+          "description": "Survey log for Linden-ec92b8 Annex."
+        },
+        {
+          "url": "https://register.example/4a7b87c3d5c0df8b81d96793",
+          "title": "Linden-ec92b8 Grove register",
+          "description": "Collection register for Linden-ec92b8 Grove."
+        }
+      ],
+      "pages": [
+        {
+          "url": "https://register.example/8750416f65c6705756c36f6f",
+          "text": "Inventory ledger for Linden-ec92b8 Ridge.\nLinden-ec92b8 Ridge | samples = 1899\nCount signed by the registrar."
+        },
+        {
+          "url": "https://register.example/46a4f90c0ff8f9f253697674",
+          "text": "Survey log for Linden-ec92b8 Annex.\nLinden-ec92b8 Annex | samples = 2049\nFinal inventory entry."
+        },
+        {
+          "url": "https://register.example/4a7b87c3d5c0df8b81d96793",
+          "text": "Collection register for Linden-ec92b8 Grove.\nLinden-ec92b8 Grove | samples = 1974\nVerified at annual close."
+        }
+      ],
+      "expectedAnswer": "1974"
+    },
+    {
+      "id": "weekly-3",
+      "tier": "multi-hop",
+      "budgets": {
+        "toolCalls": 8,
+        "maxRunMs": 300000,
+        "model": {
+          "calls": 7,
+          "tokens": 200000,
+          "costNanos": 1000000000000,
+          "concurrency": 1
+        }
+      },
+      "question": "Find the combined total for Cedar-763947 Hill and Cedar-763947 Annex, in specimens. You must use your web search tool exactly once with the exact query \"station records Cedar-763947\". Read the result pages you need. Reply with only the whole number.",
+      "query": "station records Cedar-763947",
+      "results": [
+        {
+          "url": "https://register.example/f267a423fcb919af1ae3b4f1",
+          "title": "Cedar-763947 Annex register",
+          "description": "Survey log for Cedar-763947 Annex."
+        },
+        {
+          "url": "https://register.example/15147fcb8045b010409b0f8c",
+          "title": "Cedar-763947 Hill register",
+          "description": "Survey log for Cedar-763947 Hill."
+        }
+      ],
+      "pages": [
+        {
+          "url": "https://register.example/f267a423fcb919af1ae3b4f1",
+          "text": "Survey log for Cedar-763947 Annex.\nCedar-763947 Annex | specimens = 1\nFinal inventory entry."
+        },
+        {
+          "url": "https://register.example/15147fcb8045b010409b0f8c",
+          "text": "Survey log for Cedar-763947 Hill.\nCedar-763947 Hill | specimens = 825\nFinal inventory entry."
+        }
+      ],
+      "expectedAnswer": "826"
+    },
+    {
+      "id": "weekly-4",
+      "tier": "long-page",
+      "budgets": {
+        "toolCalls": 8,
+        "maxRunMs": 300000,
+        "model": {
+          "calls": 7,
+          "tokens": 200000,
+          "costNanos": 1000000000000,
+          "concurrency": 1
+        }
+      },
+      "question": "Look up the count for Cedar-2d547e Vale, in trays. You must use your web search tool exactly once with the exact query \"field registers Cedar-2d547e\". Read the result pages you need. The register is long. Read it in parts until you reach the inventory entry. Reply with only the whole number.",
+      "query": "field registers Cedar-2d547e",
+      "results": [
+        {
+          "url": "https://register.example/30d045e3f4d6be483b5b9590",
+          "title": "Cedar-2d547e Vale register",
+          "description": "Inventory ledger for Cedar-2d547e Vale."
+        }
+      ],
+      "pages": [
+        {
+          "url": "https://register.example/30d045e3f4d6be483b5b9590",
+          "text": "Inventory ledger for Cedar-2d547e Vale.\nLabels checked at Cedar-2d547e Vale, entry 9518.\nLabels checked at Cedar-2d547e Vale, entry 5886.\nArchive sealed at Cedar-2d547e Vale, entry 8945.\nInspection complete at Cedar-2d547e Vale, entry 3646.\nArchive sealed at Cedar-2d547e Vale, entry 7750.\nInspection complete at Cedar-2d547e Vale, entry 8584.\nInspection complete at Cedar-2d547e Vale, entry 6339.\nArchive sealed at Cedar-2d547e Vale, entry 4275.\nLabels checked at Cedar-2d547e Vale, entry 7080.\nInspection complete at Cedar-2d547e Vale, entry 7058.\nForms filed at Cedar-2d547e Vale, entry 9793.\nInspection complete at Cedar-2d547e Vale, entry 3113.\nForms filed at Cedar-2d547e Vale, entry 4454.\nLabels checked at Cedar-2d547e Vale, entry 7020.\nArchive sealed at Cedar-2d547e Vale, entry 3126.\nArchive sealed at Cedar-2d547e Vale, entry 5771.\nLabels checked at Cedar-2d547e Vale, entry 5179.\nInspection complete at Cedar-2d547e Vale, entry 8483.\nArchive sealed at Cedar-2d547e Vale, entry 4716.\nArchive sealed at Cedar-2d547e Vale, entry 2641.\nLabels checked at Cedar-2d547e Vale, entry 448.\nInspection complete at Cedar-2d547e Vale, entry 9823.\nInspection complete at Cedar-2d547e Vale, entry 3856.\nForms filed at Cedar-2d547e Vale, entry 2340.\nForms filed at Cedar-2d547e Vale, entry 2221.\nArchive sealed at Cedar-2d547e Vale, entry 7312.\nInspection complete at Cedar-2d547e Vale, entry 5230.\nInspection complete at Cedar-2d547e Vale, entry 2473.\nForms filed at Cedar-2d547e Vale, entry 4429.\nLabels checked at Cedar-2d547e Vale, entry 8814.\nArchive sealed at Cedar-2d547e Vale, entry 6468.\nForms filed at Cedar-2d547e Vale, entry 4580.\nArchive sealed at Cedar-2d547e Vale, entry 6513.\nForms filed at Cedar-2d547e Vale, entry 9024.\nInspection complete at Cedar-2d547e Vale, entry 1200.\nForms filed at Cedar-2d547e Vale, entry 1768.\nArchive sealed at Cedar-2d547e Vale, entry 278.\nForms filed at Cedar-2d547e Vale, entry 7897.\nArchive sealed at Cedar-2d547e Vale, entry 9522.\nForms filed at Cedar-2d547e Vale, entry 4549.\nForms filed at Cedar-2d547e Vale, entry 4216.\nArchive sealed at Cedar-2d547e Vale, entry 8399.\nForms filed at Cedar-2d547e Vale, entry 1171.\nArchive sealed at Cedar-2d547e Vale, entry 5889.\nLabels checked at Cedar-2d547e Vale, entry 7961.\nCedar-2d547e Vale | trays = 4203\nFinal inventory entry.\nArchive cross-reference 93bca61fe9/1 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/2 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/3 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/4 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/5 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/6 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/7 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/8 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/9 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/10 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/11 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/12 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/13 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/14 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/15 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/16 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/17 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/18 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/19 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/20 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/21 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/22 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/23 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/24 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/25 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/26 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/27 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/28 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/29 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/30 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/31 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/32 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/33 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/34 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/35 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/36 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/37 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/38 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/39 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/40 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/41 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/42 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/43 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/44 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/45 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/46 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/47 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/48 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/49 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/50 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/51 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/52 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/53 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/54 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/55 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/56 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/57 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/58 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/59 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/60 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/61 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/62 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/63 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/64 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/65 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/66 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/67 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/68 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/69 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/70 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/71 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/72 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/73 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/74 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/75 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/76 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/77 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/78 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/79 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/80 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/81 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/82 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/83 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/84 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/85 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/86 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/87 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/88 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/89 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/90 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/91 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/92 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/93 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/94 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/95 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/96 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/97 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/98 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/99 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/100 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/101 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/102 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/103 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/104 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/105 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/106 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/107 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/108 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/109 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/110 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/111 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/112 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/113 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/114 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/115 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/116 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/117 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/118 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/119 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/120 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/121 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/122 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/123 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/124 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/125 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/126 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/127 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/128 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/129 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/130 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/131 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/132 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/133 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/134 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/135 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/136 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/137 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/138 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/139 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/140 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/141 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/142 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/143 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/144 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/145 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/146 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/147 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/148 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/149 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/150 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/151 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/152 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/153 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/154 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/155 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/156 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/157 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/158 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/159 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/160 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/161 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/162 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/163 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/164 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/165 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/166 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/167 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/168 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/169 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/170 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/171 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/172 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/173 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/174 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/175 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/176 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/177 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/178 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/179 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/180 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/181 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/182 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/183 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/184 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/185 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/186 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/187 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/188 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/189 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/190 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/191 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/192 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/193 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/194 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/195 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/196 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/197 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/198 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/199 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/200 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/201 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/202 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/203 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/204 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/205 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/206 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/207 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/208 filed for Cedar-2d547e Vale.\nArchive cross-reference 93bca61fe9/209 filed for Cedar-2d547e Vale."
+        }
+      ],
+      "expectedAnswer": "4203"
+    },
+    {
+      "id": "weekly-5",
+      "tier": "single",
+      "budgets": {
+        "toolCalls": 4,
+        "maxRunMs": 180000,
+        "model": {
+          "calls": 4,
+          "tokens": 100000,
+          "costNanos": 1000000000000,
+          "concurrency": 1
+        }
+      },
+      "question": "Look up the count for Linden-7a09e0 Hill, in trays. You must use your web search tool exactly once with the exact query \"annual inventory Linden-7a09e0\". Read the result pages you need. Reply with only the whole number.",
+      "query": "annual inventory Linden-7a09e0",
+      "results": [
+        {
+          "url": "https://register.example/6a4473434ee80d29f14c86d4",
+          "title": "Linden-7a09e0 Hill register",
+          "description": "Inventory ledger for Linden-7a09e0 Hill."
+        }
+      ],
+      "pages": [
+        {
+          "url": "https://register.example/6a4473434ee80d29f14c86d4",
+          "text": "Inventory ledger for Linden-7a09e0 Hill.\nLinden-7a09e0 Hill | trays = 7475\nVerified at annual close."
+        }
+      ],
+      "expectedAnswer": "7475"
+    },
+    {
+      "id": "weekly-6",
+      "tier": "distractors",
+      "budgets": {
+        "toolCalls": 8,
+        "maxRunMs": 300000,
+        "model": {
+          "calls": 7,
+          "tokens": 200000,
+          "costNanos": 1000000000000,
+          "concurrency": 1
+        }
+      },
+      "question": "Look up the count for Maple-1b6ff9 Bay, in specimens. You must use your web search tool exactly once with the exact query \"annual inventory Maple-1b6ff9\". Read the result pages you need. Reply with only the whole number.",
+      "query": "annual inventory Maple-1b6ff9",
+      "results": [
+        {
+          "url": "https://register.example/d2608fc29b34c077626a2d92",
+          "title": "Maple-1b6ff9 Bay register",
+          "description": "Collection register for Maple-1b6ff9 Bay."
+        },
+        {
+          "url": "https://register.example/625d232a2392c1130a9b3cf2",
+          "title": "Maple-1b6ff9 Annex register",
+          "description": "Survey log for Maple-1b6ff9 Annex."
+        },
+        {
+          "url": "https://register.example/a16f7d198d8f40048e4d7fd3",
+          "title": "Maple-1b6ff9 Ridge register",
+          "description": "Inventory ledger for Maple-1b6ff9 Ridge."
+        }
+      ],
+      "pages": [
+        {
+          "url": "https://register.example/d2608fc29b34c077626a2d92",
+          "text": "Collection register for Maple-1b6ff9 Bay.\nMaple-1b6ff9 Bay | specimens = 828\nVerified at annual close."
+        },
+        {
+          "url": "https://register.example/625d232a2392c1130a9b3cf2",
+          "text": "Survey log for Maple-1b6ff9 Annex.\nMaple-1b6ff9 Annex | specimens = 909\nFinal inventory entry."
+        },
+        {
+          "url": "https://register.example/a16f7d198d8f40048e4d7fd3",
+          "text": "Inventory ledger for Maple-1b6ff9 Ridge.\nMaple-1b6ff9 Ridge | specimens = 747\nVerified at annual close."
+        }
+      ],
+      "expectedAnswer": "828"
+    },
+    {
+      "id": "weekly-7",
+      "tier": "multi-hop",
+      "budgets": {
+        "toolCalls": 8,
+        "maxRunMs": 300000,
+        "model": {
+          "calls": 7,
+          "tokens": 200000,
+          "costNanos": 1000000000000,
+          "concurrency": 1
+        }
+      },
+      "question": "Report the combined total for Maple-0c6d7a Hill and Maple-0c6d7a Annex, in crates. You must use your web search tool exactly once with the exact query \"annual inventory Maple-0c6d7a\". Read the result pages you need. Reply with only the whole number.",
+      "query": "annual inventory Maple-0c6d7a",
+      "results": [
+        {
+          "url": "https://register.example/71d04eb638a6b0e661b9ea8d",
+          "title": "Maple-0c6d7a Hill register",
+          "description": "Inventory ledger for Maple-0c6d7a Hill."
+        },
+        {
+          "url": "https://register.example/f7e61ea9784ba88753234f14",
+          "title": "Maple-0c6d7a Annex register",
+          "description": "Collection register for Maple-0c6d7a Annex."
+        }
+      ],
+      "pages": [
+        {
+          "url": "https://register.example/71d04eb638a6b0e661b9ea8d",
+          "text": "Inventory ledger for Maple-0c6d7a Hill.\nMaple-0c6d7a Hill | crates = 6925\nVerified at annual close."
+        },
+        {
+          "url": "https://register.example/f7e61ea9784ba88753234f14",
+          "text": "Collection register for Maple-0c6d7a Annex.\nMaple-0c6d7a Annex | crates = 17\nCount signed by the registrar."
+        }
+      ],
+      "expectedAnswer": "6942"
+    },
+    {
+      "id": "weekly-8",
+      "tier": "long-page",
+      "budgets": {
+        "toolCalls": 8,
+        "maxRunMs": 300000,
+        "model": {
+          "calls": 7,
+          "tokens": 200000,
+          "costNanos": 1000000000000,
+          "concurrency": 1
+        }
+      },
+      "question": "Report the count for Cedar-9e33b9 Bay, in specimens. You must use your web search tool exactly once with the exact query \"station records Cedar-9e33b9\". Read the result pages you need. The register is long. Read it in parts until you reach the inventory entry. Reply with only the whole number.",
+      "query": "station records Cedar-9e33b9",
+      "results": [
+        {
+          "url": "https://register.example/fe5eef952a165519b103dcb8",
+          "title": "Cedar-9e33b9 Bay register",
+          "description": "Survey log for Cedar-9e33b9 Bay."
+        }
+      ],
+      "pages": [
+        {
+          "url": "https://register.example/fe5eef952a165519b103dcb8",
+          "text": "Survey log for Cedar-9e33b9 Bay.\nArchive sealed at Cedar-9e33b9 Bay, entry 5314.\nInspection complete at Cedar-9e33b9 Bay, entry 1079.\nInspection complete at Cedar-9e33b9 Bay, entry 8488.\nArchive sealed at Cedar-9e33b9 Bay, entry 9758.\nLabels checked at Cedar-9e33b9 Bay, entry 1257.\nLabels checked at Cedar-9e33b9 Bay, entry 85.\nInspection complete at Cedar-9e33b9 Bay, entry 6589.\nInspection complete at Cedar-9e33b9 Bay, entry 4235.\nLabels checked at Cedar-9e33b9 Bay, entry 7872.\nArchive sealed at Cedar-9e33b9 Bay, entry 4225.\nForms filed at Cedar-9e33b9 Bay, entry 4363.\nForms filed at Cedar-9e33b9 Bay, entry 8363.\nLabels checked at Cedar-9e33b9 Bay, entry 6884.\nForms filed at Cedar-9e33b9 Bay, entry 9282.\nInspection complete at Cedar-9e33b9 Bay, entry 8055.\nInspection complete at Cedar-9e33b9 Bay, entry 8771.\nInspection complete at Cedar-9e33b9 Bay, entry 4858.\nInspection complete at Cedar-9e33b9 Bay, entry 5620.\nForms filed at Cedar-9e33b9 Bay, entry 6890.\nForms filed at Cedar-9e33b9 Bay, entry 4846.\nArchive sealed at Cedar-9e33b9 Bay, entry 6285.\nLabels checked at Cedar-9e33b9 Bay, entry 7427.\nForms filed at Cedar-9e33b9 Bay, entry 7354.\nInspection complete at Cedar-9e33b9 Bay, entry 7256.\nForms filed at Cedar-9e33b9 Bay, entry 1360.\nInspection complete at Cedar-9e33b9 Bay, entry 5205.\nInspection complete at Cedar-9e33b9 Bay, entry 5357.\nInspection complete at Cedar-9e33b9 Bay, entry 3537.\nArchive sealed at Cedar-9e33b9 Bay, entry 4010.\nInspection complete at Cedar-9e33b9 Bay, entry 5279.\nForms filed at Cedar-9e33b9 Bay, entry 1934.\nArchive sealed at Cedar-9e33b9 Bay, entry 3698.\nInspection complete at Cedar-9e33b9 Bay, entry 6525.\nArchive sealed at Cedar-9e33b9 Bay, entry 184.\nLabels checked at Cedar-9e33b9 Bay, entry 2475.\nForms filed at Cedar-9e33b9 Bay, entry 3158.\nArchive sealed at Cedar-9e33b9 Bay, entry 267.\nArchive sealed at Cedar-9e33b9 Bay, entry 3393.\nLabels checked at Cedar-9e33b9 Bay, entry 4295.\nInspection complete at Cedar-9e33b9 Bay, entry 7108.\nLabels checked at Cedar-9e33b9 Bay, entry 4373.\nLabels checked at Cedar-9e33b9 Bay, entry 6017.\nForms filed at Cedar-9e33b9 Bay, entry 3336.\nLabels checked at Cedar-9e33b9 Bay, entry 5358.\nLabels checked at Cedar-9e33b9 Bay, entry 8579.\nCedar-9e33b9 Bay | specimens = 4531\nVerified at annual close.\nStorage docket 404196d65a/1 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/2 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/3 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/4 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/5 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/6 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/7 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/8 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/9 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/10 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/11 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/12 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/13 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/14 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/15 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/16 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/17 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/18 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/19 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/20 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/21 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/22 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/23 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/24 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/25 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/26 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/27 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/28 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/29 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/30 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/31 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/32 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/33 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/34 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/35 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/36 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/37 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/38 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/39 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/40 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/41 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/42 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/43 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/44 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/45 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/46 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/47 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/48 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/49 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/50 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/51 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/52 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/53 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/54 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/55 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/56 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/57 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/58 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/59 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/60 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/61 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/62 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/63 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/64 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/65 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/66 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/67 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/68 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/69 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/70 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/71 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/72 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/73 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/74 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/75 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/76 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/77 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/78 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/79 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/80 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/81 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/82 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/83 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/84 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/85 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/86 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/87 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/88 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/89 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/90 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/91 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/92 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/93 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/94 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/95 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/96 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/97 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/98 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/99 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/100 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/101 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/102 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/103 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/104 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/105 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/106 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/107 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/108 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/109 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/110 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/111 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/112 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/113 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/114 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/115 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/116 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/117 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/118 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/119 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/120 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/121 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/122 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/123 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/124 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/125 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/126 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/127 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/128 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/129 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/130 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/131 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/132 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/133 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/134 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/135 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/136 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/137 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/138 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/139 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/140 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/141 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/142 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/143 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/144 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/145 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/146 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/147 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/148 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/149 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/150 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/151 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/152 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/153 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/154 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/155 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/156 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/157 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/158 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/159 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/160 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/161 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/162 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/163 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/164 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/165 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/166 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/167 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/168 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/169 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/170 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/171 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/172 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/173 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/174 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/175 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/176 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/177 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/178 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/179 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/180 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/181 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/182 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/183 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/184 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/185 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/186 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/187 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/188 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/189 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/190 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/191 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/192 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/193 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/194 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/195 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/196 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/197 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/198 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/199 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/200 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/201 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/202 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/203 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/204 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/205 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/206 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/207 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/208 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/209 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/210 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/211 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/212 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/213 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/214 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/215 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/216 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/217 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/218 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/219 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/220 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/221 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/222 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/223 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/224 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/225 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/226 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/227 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/228 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/229 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/230 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/231 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/232 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/233 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/234 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/235 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/236 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/237 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/238 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/239 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/240 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/241 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/242 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/243 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/244 filed for Cedar-9e33b9 Bay.\nStorage docket 404196d65a/245 filed for Cedar-9e33b9 Bay."
+        }
+      ],
+      "expectedAnswer": "4531"
+    },
+    {
+      "id": "weekly-9",
+      "tier": "single",
+      "budgets": {
+        "toolCalls": 4,
+        "maxRunMs": 180000,
+        "model": {
+          "calls": 4,
+          "tokens": 100000,
+          "costNanos": 1000000000000,
+          "concurrency": 1
+        }
+      },
+      "question": "Look up the count for Cedar-51e05b Grove, in crates. You must use your web search tool exactly once with the exact query \"annual inventory Cedar-51e05b\". Read the result pages you need. Reply with only the whole number.",
+      "query": "annual inventory Cedar-51e05b",
+      "results": [
+        {
+          "url": "https://register.example/493682d038a9c1f2f10c5522",
+          "title": "Cedar-51e05b Grove register",
+          "description": "Inventory ledger for Cedar-51e05b Grove."
+        }
+      ],
+      "pages": [
+        {
+          "url": "https://register.example/493682d038a9c1f2f10c5522",
+          "text": "Inventory ledger for Cedar-51e05b Grove.\nCedar-51e05b Grove | crates = 3394\nVerified at annual close."
+        }
+      ],
+      "expectedAnswer": "3394"
+    },
+    {
+      "id": "weekly-10",
+      "tier": "distractors",
+      "budgets": {
+        "toolCalls": 8,
+        "maxRunMs": 300000,
+        "model": {
+          "calls": 7,
+          "tokens": 200000,
+          "costNanos": 1000000000000,
+          "concurrency": 1
+        }
+      },
+      "question": "Report the count for Cedar-a88eca Vale, in trays. You must use your web search tool exactly once with the exact query \"station records Cedar-a88eca\". Read the result pages you need. Reply with only the whole number.",
+      "query": "station records Cedar-a88eca",
+      "results": [
+        {
+          "url": "https://register.example/d45cfc2da5c3327a7ca10942",
+          "title": "Cedar-a88eca Vale register",
+          "description": "Inventory ledger for Cedar-a88eca Vale."
+        },
+        {
+          "url": "https://register.example/9bc76f3a25f964814b4e33f4",
+          "title": "Cedar-a88eca Ridge register",
+          "description": "Collection register for Cedar-a88eca Ridge."
+        },
+        {
+          "url": "https://register.example/3a7185a04994b94b12a42a24",
+          "title": "Cedar-a88eca Annex register",
+          "description": "Inventory ledger for Cedar-a88eca Annex."
+        }
+      ],
+      "pages": [
+        {
+          "url": "https://register.example/d45cfc2da5c3327a7ca10942",
+          "text": "Inventory ledger for Cedar-a88eca Vale.\nCedar-a88eca Vale | trays = 6260\nCount signed by the registrar."
+        },
+        {
+          "url": "https://register.example/9bc76f3a25f964814b4e33f4",
+          "text": "Collection register for Cedar-a88eca Ridge.\nCedar-a88eca Ridge | trays = 6247\nCount signed by the registrar."
+        },
+        {
+          "url": "https://register.example/3a7185a04994b94b12a42a24",
+          "text": "Inventory ledger for Cedar-a88eca Annex.\nCedar-a88eca Annex | trays = 6273\nCount signed by the registrar."
+        }
+      ],
+      "expectedAnswer": "6260"
+    },
+    {
+      "id": "weekly-11",
+      "tier": "multi-hop",
+      "budgets": {
+        "toolCalls": 8,
+        "maxRunMs": 300000,
+        "model": {
+          "calls": 7,
+          "tokens": 200000,
+          "costNanos": 1000000000000,
+          "concurrency": 1
+        }
+      },
+      "question": "Report the combined total for Maple-dd8a8c Bay and Maple-dd8a8c Annex, in trays. You must use your web search tool exactly once with the exact query \"field registers Maple-dd8a8c\". Read the result pages you need. Reply with only the whole number.",
+      "query": "field registers Maple-dd8a8c",
+      "results": [
+        {
+          "url": "https://register.example/1422dfa41fa56bd088120549",
+          "title": "Maple-dd8a8c Bay register",
+          "description": "Collection register for Maple-dd8a8c Bay."
+        },
+        {
+          "url": "https://register.example/9411ae23f755648c8b9e556e",
+          "title": "Maple-dd8a8c Annex register",
+          "description": "Collection register for Maple-dd8a8c Annex."
+        }
+      ],
+      "pages": [
+        {
+          "url": "https://register.example/1422dfa41fa56bd088120549",
+          "text": "Collection register for Maple-dd8a8c Bay.\nMaple-dd8a8c Bay | trays = 2163\nCount signed by the registrar."
+        },
+        {
+          "url": "https://register.example/9411ae23f755648c8b9e556e",
+          "text": "Collection register for Maple-dd8a8c Annex.\nMaple-dd8a8c Annex | trays = 87\nVerified at annual close."
+        }
+      ],
+      "expectedAnswer": "2250"
+    },
+    {
+      "id": "weekly-12",
+      "tier": "long-page",
+      "budgets": {
+        "toolCalls": 8,
+        "maxRunMs": 300000,
+        "model": {
+          "calls": 7,
+          "tokens": 200000,
+          "costNanos": 1000000000000,
+          "concurrency": 1
+        }
+      },
+      "question": "Find the count for Cedar-cf7f72 Grove, in trays. You must use your web search tool exactly once with the exact query \"annual inventory Cedar-cf7f72\". Read the result pages you need. The register is long. Read it in parts until you reach the inventory entry. Reply with only the whole number.",
+      "query": "annual inventory Cedar-cf7f72",
+      "results": [
+        {
+          "url": "https://register.example/ad08cbf318dc93fb5ca72b2d",
+          "title": "Cedar-cf7f72 Grove register",
+          "description": "Inventory ledger for Cedar-cf7f72 Grove."
+        }
+      ],
+      "pages": [
+        {
+          "url": "https://register.example/ad08cbf318dc93fb5ca72b2d",
+          "text": "Inventory ledger for Cedar-cf7f72 Grove.\nForms filed at Cedar-cf7f72 Grove, entry 2321.\nForms filed at Cedar-cf7f72 Grove, entry 7818.\nArchive sealed at Cedar-cf7f72 Grove, entry 1670.\nArchive sealed at Cedar-cf7f72 Grove, entry 1571.\nLabels checked at Cedar-cf7f72 Grove, entry 7803.\nInspection complete at Cedar-cf7f72 Grove, entry 636.\nLabels checked at Cedar-cf7f72 Grove, entry 8391.\nArchive sealed at Cedar-cf7f72 Grove, entry 9850.\nInspection complete at Cedar-cf7f72 Grove, entry 6274.\nArchive sealed at Cedar-cf7f72 Grove, entry 397.\nForms filed at Cedar-cf7f72 Grove, entry 2585.\nInspection complete at Cedar-cf7f72 Grove, entry 1791.\nForms filed at Cedar-cf7f72 Grove, entry 7744.\nArchive sealed at Cedar-cf7f72 Grove, entry 7979.\nInspection complete at Cedar-cf7f72 Grove, entry 9913.\nForms filed at Cedar-cf7f72 Grove, entry 1773.\nInspection complete at Cedar-cf7f72 Grove, entry 8594.\nInspection complete at Cedar-cf7f72 Grove, entry 7794.\nArchive sealed at Cedar-cf7f72 Grove, entry 3564.\nArchive sealed at Cedar-cf7f72 Grove, entry 8074.\nArchive sealed at Cedar-cf7f72 Grove, entry 2515.\nLabels checked at Cedar-cf7f72 Grove, entry 2187.\nInspection complete at Cedar-cf7f72 Grove, entry 8180.\nLabels checked at Cedar-cf7f72 Grove, entry 8398.\nLabels checked at Cedar-cf7f72 Grove, entry 8805.\nForms filed at Cedar-cf7f72 Grove, entry 9465.\nLabels checked at Cedar-cf7f72 Grove, entry 1317.\nInspection complete at Cedar-cf7f72 Grove, entry 1450.\nArchive sealed at Cedar-cf7f72 Grove, entry 5553.\nLabels checked at Cedar-cf7f72 Grove, entry 4824.\nInspection complete at Cedar-cf7f72 Grove, entry 4713.\nArchive sealed at Cedar-cf7f72 Grove, entry 9484.\nArchive sealed at Cedar-cf7f72 Grove, entry 177.\nLabels checked at Cedar-cf7f72 Grove, entry 8251.\nLabels checked at Cedar-cf7f72 Grove, entry 7102.\nLabels checked at Cedar-cf7f72 Grove, entry 8304.\nArchive sealed at Cedar-cf7f72 Grove, entry 7542.\nLabels checked at Cedar-cf7f72 Grove, entry 8585.\nArchive sealed at Cedar-cf7f72 Grove, entry 8686.\nLabels checked at Cedar-cf7f72 Grove, entry 3189.\nInspection complete at Cedar-cf7f72 Grove, entry 2538.\nArchive sealed at Cedar-cf7f72 Grove, entry 4677.\nForms filed at Cedar-cf7f72 Grove, entry 5569.\nForms filed at Cedar-cf7f72 Grove, entry 8226.\nArchive sealed at Cedar-cf7f72 Grove, entry 5613.\nArchive sealed at Cedar-cf7f72 Grove, entry 3219.\nLabels checked at Cedar-cf7f72 Grove, entry 3213.\nLabels checked at Cedar-cf7f72 Grove, entry 3565.\nCedar-cf7f72 Grove | trays = 1203\nCount signed by the registrar.\nTransfer receipt 167d2600c4/1 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/2 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/3 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/4 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/5 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/6 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/7 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/8 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/9 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/10 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/11 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/12 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/13 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/14 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/15 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/16 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/17 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/18 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/19 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/20 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/21 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/22 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/23 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/24 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/25 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/26 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/27 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/28 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/29 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/30 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/31 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/32 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/33 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/34 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/35 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/36 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/37 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/38 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/39 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/40 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/41 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/42 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/43 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/44 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/45 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/46 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/47 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/48 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/49 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/50 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/51 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/52 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/53 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/54 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/55 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/56 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/57 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/58 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/59 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/60 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/61 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/62 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/63 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/64 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/65 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/66 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/67 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/68 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/69 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/70 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/71 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/72 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/73 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/74 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/75 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/76 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/77 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/78 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/79 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/80 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/81 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/82 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/83 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/84 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/85 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/86 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/87 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/88 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/89 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/90 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/91 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/92 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/93 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/94 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/95 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/96 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/97 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/98 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/99 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/100 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/101 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/102 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/103 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/104 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/105 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/106 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/107 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/108 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/109 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/110 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/111 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/112 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/113 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/114 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/115 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/116 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/117 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/118 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/119 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/120 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/121 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/122 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/123 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/124 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/125 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/126 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/127 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/128 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/129 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/130 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/131 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/132 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/133 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/134 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/135 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/136 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/137 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/138 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/139 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/140 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/141 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/142 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/143 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/144 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/145 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/146 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/147 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/148 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/149 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/150 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/151 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/152 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/153 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/154 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/155 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/156 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/157 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/158 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/159 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/160 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/161 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/162 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/163 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/164 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/165 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/166 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/167 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/168 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/169 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/170 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/171 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/172 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/173 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/174 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/175 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/176 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/177 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/178 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/179 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/180 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/181 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/182 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/183 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/184 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/185 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/186 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/187 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/188 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/189 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/190 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/191 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/192 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/193 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/194 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/195 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/196 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/197 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/198 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/199 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/200 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/201 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/202 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/203 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/204 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/205 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/206 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/207 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/208 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/209 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/210 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/211 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/212 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/213 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/214 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/215 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/216 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/217 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/218 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/219 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/220 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/221 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/222 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/223 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/224 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/225 filed for Cedar-cf7f72 Grove.\nTransfer receipt 167d2600c4/226 filed for Cedar-cf7f72 Grove."
+        }
+      ],
+      "expectedAnswer": "1203"
+    },
+    {
+      "id": "weekly-13",
+      "tier": "single",
+      "budgets": {
+        "toolCalls": 4,
+        "maxRunMs": 180000,
+        "model": {
+          "calls": 4,
+          "tokens": 100000,
+          "costNanos": 1000000000000,
+          "concurrency": 1
+        }
+      },
+      "question": "Report the count for Linden-1acd91 Vale, in trays. You must use your web search tool exactly once with the exact query \"field registers Linden-1acd91\". Read the result pages you need. Reply with only the whole number.",
+      "query": "field registers Linden-1acd91",
+      "results": [
+        {
+          "url": "https://register.example/46a1be93730a430a57d49b2d",
+          "title": "Linden-1acd91 Vale register",
+          "description": "Survey log for Linden-1acd91 Vale."
+        }
+      ],
+      "pages": [
+        {
+          "url": "https://register.example/46a1be93730a430a57d49b2d",
+          "text": "Survey log for Linden-1acd91 Vale.\nLinden-1acd91 Vale | trays = 6188\nVerified at annual close."
+        }
+      ],
+      "expectedAnswer": "6188"
+    },
+    {
+      "id": "weekly-14",
+      "tier": "distractors",
+      "budgets": {
+        "toolCalls": 8,
+        "maxRunMs": 300000,
+        "model": {
+          "calls": 7,
+          "tokens": 200000,
+          "costNanos": 1000000000000,
+          "concurrency": 1
+        }
+      },
+      "question": "Look up the count for Rowan-ed89a1 Vale, in specimens. You must use your web search tool exactly once with the exact query \"annual inventory Rowan-ed89a1\". Read the result pages you need. Reply with only the whole number.",
+      "query": "annual inventory Rowan-ed89a1",
+      "results": [
+        {
+          "url": "https://register.example/b4ef37dae8a9f1b690166631",
+          "title": "Rowan-ed89a1 Ridge register",
+          "description": "Collection register for Rowan-ed89a1 Ridge."
+        },
+        {
+          "url": "https://register.example/822dddc76e60300832fb6c9d",
+          "title": "Rowan-ed89a1 Vale register",
+          "description": "Collection register for Rowan-ed89a1 Vale."
+        },
+        {
+          "url": "https://register.example/5e03d94f14c2436b19677a4f",
+          "title": "Rowan-ed89a1 Annex register",
+          "description": "Survey log for Rowan-ed89a1 Annex."
+        }
+      ],
+      "pages": [
+        {
+          "url": "https://register.example/b4ef37dae8a9f1b690166631",
+          "text": "Collection register for Rowan-ed89a1 Ridge.\nRowan-ed89a1 Ridge | specimens = 2590\nVerified at annual close."
+        },
+        {
+          "url": "https://register.example/822dddc76e60300832fb6c9d",
+          "text": "Collection register for Rowan-ed89a1 Vale.\nRowan-ed89a1 Vale | specimens = 2632\nVerified at annual close."
+        },
+        {
+          "url": "https://register.example/5e03d94f14c2436b19677a4f",
+          "text": "Survey log for Rowan-ed89a1 Annex.\nRowan-ed89a1 Annex | specimens = 2674\nFinal inventory entry."
+        }
+      ],
+      "expectedAnswer": "2632"
+    },
+    {
+      "id": "weekly-15",
+      "tier": "multi-hop",
+      "budgets": {
+        "toolCalls": 8,
+        "maxRunMs": 300000,
+        "model": {
+          "calls": 7,
+          "tokens": 200000,
+          "costNanos": 1000000000000,
+          "concurrency": 1
+        }
+      },
+      "question": "Find the combined total for Cedar-64766b Bay and Cedar-64766b Annex, in crates. You must use your web search tool exactly once with the exact query \"station records Cedar-64766b\". Read the result pages you need. Reply with only the whole number.",
+      "query": "station records Cedar-64766b",
+      "results": [
+        {
+          "url": "https://register.example/ce2cb55d12a4fd041d74c5b6",
+          "title": "Cedar-64766b Annex register",
+          "description": "Inventory ledger for Cedar-64766b Annex."
+        },
+        {
+          "url": "https://register.example/ecab6819e28d17b51858ce0f",
+          "title": "Cedar-64766b Bay register",
+          "description": "Survey log for Cedar-64766b Bay."
+        }
+      ],
+      "pages": [
+        {
+          "url": "https://register.example/ce2cb55d12a4fd041d74c5b6",
+          "text": "Inventory ledger for Cedar-64766b Annex.\nCedar-64766b Annex | crates = 66\nCount signed by the registrar."
+        },
+        {
+          "url": "https://register.example/ecab6819e28d17b51858ce0f",
+          "text": "Survey log for Cedar-64766b Bay.\nCedar-64766b Bay | crates = 7960\nVerified at annual close."
+        }
+      ],
+      "expectedAnswer": "8026"
+    },
+    {
+      "id": "weekly-16",
+      "tier": "long-page",
+      "budgets": {
+        "toolCalls": 8,
+        "maxRunMs": 300000,
+        "model": {
+          "calls": 7,
+          "tokens": 200000,
+          "costNanos": 1000000000000,
+          "concurrency": 1
+        }
+      },
+      "question": "Look up the count for Rowan-66cf47 Bay, in crates. You must use your web search tool exactly once with the exact query \"station records Rowan-66cf47\". Read the result pages you need. The register is long. Read it in parts until you reach the inventory entry. Reply with only the whole number.",
+      "query": "station records Rowan-66cf47",
+      "results": [
+        {
+          "url": "https://register.example/d2aaefc67a8721197820c377",
+          "title": "Rowan-66cf47 Bay register",
+          "description": "Inventory ledger for Rowan-66cf47 Bay."
+        }
+      ],
+      "pages": [
+        {
+          "url": "https://register.example/d2aaefc67a8721197820c377",
+          "text": "Inventory ledger for Rowan-66cf47 Bay.\nForms filed at Rowan-66cf47 Bay, entry 9339.\nInspection complete at Rowan-66cf47 Bay, entry 2501.\nLabels checked at Rowan-66cf47 Bay, entry 1045.\nLabels checked at Rowan-66cf47 Bay, entry 8972.\nArchive sealed at Rowan-66cf47 Bay, entry 2278.\nInspection complete at Rowan-66cf47 Bay, entry 2230.\nForms filed at Rowan-66cf47 Bay, entry 2414.\nLabels checked at Rowan-66cf47 Bay, entry 9437.\nInspection complete at Rowan-66cf47 Bay, entry 6227.\nArchive sealed at Rowan-66cf47 Bay, entry 1279.\nLabels checked at Rowan-66cf47 Bay, entry 1938.\nForms filed at Rowan-66cf47 Bay, entry 7012.\nInspection complete at Rowan-66cf47 Bay, entry 1510.\nArchive sealed at Rowan-66cf47 Bay, entry 3554.\nLabels checked at Rowan-66cf47 Bay, entry 4067.\nInspection complete at Rowan-66cf47 Bay, entry 8511.\nForms filed at Rowan-66cf47 Bay, entry 4463.\nArchive sealed at Rowan-66cf47 Bay, entry 6936.\nInspection complete at Rowan-66cf47 Bay, entry 8968.\nInspection complete at Rowan-66cf47 Bay, entry 5307.\nLabels checked at Rowan-66cf47 Bay, entry 9246.\nArchive sealed at Rowan-66cf47 Bay, entry 1316.\nArchive sealed at Rowan-66cf47 Bay, entry 496.\nArchive sealed at Rowan-66cf47 Bay, entry 8051.\nInspection complete at Rowan-66cf47 Bay, entry 2274.\nInspection complete at Rowan-66cf47 Bay, entry 2173.\nLabels checked at Rowan-66cf47 Bay, entry 782.\nInspection complete at Rowan-66cf47 Bay, entry 1317.\nArchive sealed at Rowan-66cf47 Bay, entry 9329.\nForms filed at Rowan-66cf47 Bay, entry 5035.\nArchive sealed at Rowan-66cf47 Bay, entry 1594.\nInspection complete at Rowan-66cf47 Bay, entry 3173.\nArchive sealed at Rowan-66cf47 Bay, entry 4994.\nInspection complete at Rowan-66cf47 Bay, entry 1811.\nForms filed at Rowan-66cf47 Bay, entry 8687.\nInspection complete at Rowan-66cf47 Bay, entry 1259.\nArchive sealed at Rowan-66cf47 Bay, entry 4068.\nArchive sealed at Rowan-66cf47 Bay, entry 2197.\nInspection complete at Rowan-66cf47 Bay, entry 5502.\nLabels checked at Rowan-66cf47 Bay, entry 5145.\nArchive sealed at Rowan-66cf47 Bay, entry 2343.\nInspection complete at Rowan-66cf47 Bay, entry 9398.\nArchive sealed at Rowan-66cf47 Bay, entry 6724.\nForms filed at Rowan-66cf47 Bay, entry 2146.\nForms filed at Rowan-66cf47 Bay, entry 6394.\nArchive sealed at Rowan-66cf47 Bay, entry 648.\nArchive sealed at Rowan-66cf47 Bay, entry 7862.\nInspection complete at Rowan-66cf47 Bay, entry 3151.\nForms filed at Rowan-66cf47 Bay, entry 4505.\nForms filed at Rowan-66cf47 Bay, entry 403.\nForms filed at Rowan-66cf47 Bay, entry 7934.\nRowan-66cf47 Bay | crates = 3110\nFinal inventory entry.\nArchive cross-reference 9fd1d6a814/1 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/2 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/3 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/4 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/5 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/6 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/7 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/8 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/9 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/10 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/11 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/12 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/13 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/14 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/15 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/16 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/17 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/18 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/19 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/20 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/21 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/22 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/23 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/24 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/25 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/26 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/27 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/28 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/29 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/30 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/31 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/32 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/33 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/34 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/35 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/36 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/37 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/38 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/39 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/40 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/41 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/42 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/43 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/44 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/45 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/46 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/47 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/48 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/49 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/50 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/51 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/52 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/53 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/54 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/55 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/56 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/57 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/58 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/59 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/60 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/61 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/62 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/63 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/64 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/65 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/66 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/67 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/68 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/69 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/70 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/71 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/72 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/73 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/74 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/75 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/76 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/77 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/78 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/79 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/80 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/81 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/82 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/83 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/84 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/85 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/86 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/87 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/88 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/89 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/90 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/91 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/92 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/93 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/94 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/95 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/96 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/97 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/98 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/99 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/100 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/101 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/102 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/103 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/104 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/105 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/106 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/107 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/108 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/109 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/110 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/111 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/112 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/113 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/114 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/115 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/116 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/117 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/118 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/119 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/120 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/121 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/122 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/123 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/124 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/125 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/126 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/127 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/128 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/129 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/130 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/131 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/132 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/133 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/134 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/135 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/136 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/137 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/138 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/139 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/140 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/141 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/142 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/143 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/144 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/145 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/146 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/147 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/148 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/149 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/150 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/151 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/152 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/153 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/154 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/155 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/156 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/157 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/158 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/159 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/160 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/161 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/162 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/163 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/164 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/165 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/166 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/167 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/168 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/169 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/170 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/171 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/172 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/173 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/174 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/175 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/176 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/177 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/178 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/179 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/180 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/181 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/182 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/183 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/184 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/185 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/186 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/187 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/188 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/189 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/190 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/191 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/192 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/193 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/194 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/195 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/196 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/197 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/198 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/199 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/200 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/201 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/202 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/203 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/204 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/205 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/206 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/207 filed for Rowan-66cf47 Bay.\nArchive cross-reference 9fd1d6a814/208 filed for Rowan-66cf47 Bay."
+        }
+      ],
+      "expectedAnswer": "3110"
+    },
+    {
+      "id": "weekly-17",
+      "tier": "single",
+      "budgets": {
+        "toolCalls": 4,
+        "maxRunMs": 180000,
+        "model": {
+          "calls": 4,
+          "tokens": 100000,
+          "costNanos": 1000000000000,
+          "concurrency": 1
+        }
+      },
+      "question": "Report the count for Maple-52269a Vale, in crates. You must use your web search tool exactly once with the exact query \"station records Maple-52269a\". Read the result pages you need. Reply with only the whole number.",
+      "query": "station records Maple-52269a",
+      "results": [
+        {
+          "url": "https://register.example/54c4c7ef122642509e02254a",
+          "title": "Maple-52269a Vale register",
+          "description": "Collection register for Maple-52269a Vale."
+        }
+      ],
+      "pages": [
+        {
+          "url": "https://register.example/54c4c7ef122642509e02254a",
+          "text": "Collection register for Maple-52269a Vale.\nMaple-52269a Vale | crates = 5353\nFinal inventory entry."
+        }
+      ],
+      "expectedAnswer": "5353"
+    },
+    {
+      "id": "weekly-18",
+      "tier": "distractors",
+      "budgets": {
+        "toolCalls": 8,
+        "maxRunMs": 300000,
+        "model": {
+          "calls": 7,
+          "tokens": 200000,
+          "costNanos": 1000000000000,
+          "concurrency": 1
+        }
+      },
+      "question": "Report the count for Rowan-f192e4 Grove, in trays. You must use your web search tool exactly once with the exact query \"annual inventory Rowan-f192e4\". Read the result pages you need. Reply with only the whole number.",
+      "query": "annual inventory Rowan-f192e4",
+      "results": [
+        {
+          "url": "https://register.example/5ac6a1f69014e67249b52a16",
+          "title": "Rowan-f192e4 Annex register",
+          "description": "Inventory ledger for Rowan-f192e4 Annex."
+        },
+        {
+          "url": "https://register.example/499bfbc7496c09bbc0aa0fed",
+          "title": "Rowan-f192e4 Ridge register",
+          "description": "Collection register for Rowan-f192e4 Ridge."
+        },
+        {
+          "url": "https://register.example/83fee50b399abc5c78d24489",
+          "title": "Rowan-f192e4 Grove register",
+          "description": "Survey log for Rowan-f192e4 Grove."
+        }
+      ],
+      "pages": [
+        {
+          "url": "https://register.example/5ac6a1f69014e67249b52a16",
+          "text": "Inventory ledger for Rowan-f192e4 Annex.\nRowan-f192e4 Annex | trays = 3962\nCount signed by the registrar."
+        },
+        {
+          "url": "https://register.example/499bfbc7496c09bbc0aa0fed",
+          "text": "Collection register for Rowan-f192e4 Ridge.\nRowan-f192e4 Ridge | trays = 3920\nFinal inventory entry."
+        },
+        {
+          "url": "https://register.example/83fee50b399abc5c78d24489",
+          "text": "Survey log for Rowan-f192e4 Grove.\nRowan-f192e4 Grove | trays = 3941\nFinal inventory entry."
+        }
+      ],
+      "expectedAnswer": "3941"
+    },
+    {
+      "id": "weekly-19",
+      "tier": "multi-hop",
+      "budgets": {
+        "toolCalls": 8,
+        "maxRunMs": 300000,
+        "model": {
+          "calls": 7,
+          "tokens": 200000,
+          "costNanos": 1000000000000,
+          "concurrency": 1
+        }
+      },
+      "question": "Find the combined total for Aster-d361dc Bay and Aster-d361dc Annex, in samples. You must use your web search tool exactly once with the exact query \"field registers Aster-d361dc\". Read the result pages you need. Reply with only the whole number.",
+      "query": "field registers Aster-d361dc",
+      "results": [
+        {
+          "url": "https://register.example/7f0390c517e9285255f4bce5",
+          "title": "Aster-d361dc Annex register",
+          "description": "Collection register for Aster-d361dc Annex."
+        },
+        {
+          "url": "https://register.example/3d797fe24fb639aab3e0dee5",
+          "title": "Aster-d361dc Bay register",
+          "description": "Collection register for Aster-d361dc Bay."
+        }
+      ],
+      "pages": [
+        {
+          "url": "https://register.example/7f0390c517e9285255f4bce5",
+          "text": "Collection register for Aster-d361dc Annex.\nAster-d361dc Annex | samples = 74\nFinal inventory entry."
+        },
+        {
+          "url": "https://register.example/3d797fe24fb639aab3e0dee5",
+          "text": "Collection register for Aster-d361dc Bay.\nAster-d361dc Bay | samples = 119\nCount signed by the registrar."
+        }
+      ],
+      "expectedAnswer": "193"
+    },
+    {
+      "id": "weekly-20",
+      "tier": "long-page",
+      "budgets": {
+        "toolCalls": 8,
+        "maxRunMs": 300000,
+        "model": {
+          "calls": 7,
+          "tokens": 200000,
+          "costNanos": 1000000000000,
+          "concurrency": 1
+        }
+      },
+      "question": "Look up the count for Willow-ededf8 Vale, in specimens. You must use your web search tool exactly once with the exact query \"field registers Willow-ededf8\". Read the result pages you need. The register is long. Read it in parts until you reach the inventory entry. Reply with only the whole number.",
+      "query": "field registers Willow-ededf8",
+      "results": [
+        {
+          "url": "https://register.example/6a296f0aadd65da3a596fa83",
+          "title": "Willow-ededf8 Vale register",
+          "description": "Survey log for Willow-ededf8 Vale."
+        }
+      ],
+      "pages": [
+        {
+          "url": "https://register.example/6a296f0aadd65da3a596fa83",
+          "text": "Survey log for Willow-ededf8 Vale.\nForms filed at Willow-ededf8 Vale, entry 3864.\nLabels checked at Willow-ededf8 Vale, entry 4790.\nForms filed at Willow-ededf8 Vale, entry 4341.\nLabels checked at Willow-ededf8 Vale, entry 1318.\nArchive sealed at Willow-ededf8 Vale, entry 5503.\nInspection complete at Willow-ededf8 Vale, entry 3878.\nArchive sealed at Willow-ededf8 Vale, entry 9188.\nArchive sealed at Willow-ededf8 Vale, entry 5194.\nInspection complete at Willow-ededf8 Vale, entry 3787.\nLabels checked at Willow-ededf8 Vale, entry 7639.\nArchive sealed at Willow-ededf8 Vale, entry 8725.\nArchive sealed at Willow-ededf8 Vale, entry 6774.\nForms filed at Willow-ededf8 Vale, entry 5223.\nLabels checked at Willow-ededf8 Vale, entry 47.\nArchive sealed at Willow-ededf8 Vale, entry 3797.\nInspection complete at Willow-ededf8 Vale, entry 9996.\nForms filed at Willow-ededf8 Vale, entry 166.\nArchive sealed at Willow-ededf8 Vale, entry 333.\nLabels checked at Willow-ededf8 Vale, entry 9900.\nInspection complete at Willow-ededf8 Vale, entry 6790.\nInspection complete at Willow-ededf8 Vale, entry 1615.\nForms filed at Willow-ededf8 Vale, entry 7493.\nInspection complete at Willow-ededf8 Vale, entry 5399.\nLabels checked at Willow-ededf8 Vale, entry 4049.\nInspection complete at Willow-ededf8 Vale, entry 4724.\nForms filed at Willow-ededf8 Vale, entry 390.\nForms filed at Willow-ededf8 Vale, entry 9932.\nForms filed at Willow-ededf8 Vale, entry 5494.\nLabels checked at Willow-ededf8 Vale, entry 9865.\nInspection complete at Willow-ededf8 Vale, entry 5524.\nArchive sealed at Willow-ededf8 Vale, entry 2263.\nArchive sealed at Willow-ededf8 Vale, entry 3370.\nForms filed at Willow-ededf8 Vale, entry 623.\nArchive sealed at Willow-ededf8 Vale, entry 3732.\nForms filed at Willow-ededf8 Vale, entry 9354.\nForms filed at Willow-ededf8 Vale, entry 8659.\nInspection complete at Willow-ededf8 Vale, entry 6458.\nLabels checked at Willow-ededf8 Vale, entry 2837.\nForms filed at Willow-ededf8 Vale, entry 2737.\nArchive sealed at Willow-ededf8 Vale, entry 3418.\nArchive sealed at Willow-ededf8 Vale, entry 2723.\nForms filed at Willow-ededf8 Vale, entry 171.\nInspection complete at Willow-ededf8 Vale, entry 5207.\nInspection complete at Willow-ededf8 Vale, entry 7621.\nForms filed at Willow-ededf8 Vale, entry 1156.\nWillow-ededf8 Vale | specimens = 3147\nVerified at annual close.\nStorage docket b4da083142/1 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/2 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/3 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/4 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/5 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/6 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/7 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/8 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/9 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/10 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/11 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/12 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/13 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/14 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/15 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/16 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/17 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/18 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/19 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/20 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/21 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/22 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/23 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/24 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/25 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/26 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/27 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/28 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/29 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/30 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/31 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/32 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/33 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/34 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/35 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/36 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/37 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/38 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/39 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/40 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/41 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/42 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/43 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/44 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/45 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/46 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/47 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/48 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/49 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/50 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/51 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/52 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/53 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/54 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/55 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/56 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/57 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/58 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/59 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/60 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/61 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/62 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/63 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/64 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/65 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/66 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/67 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/68 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/69 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/70 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/71 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/72 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/73 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/74 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/75 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/76 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/77 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/78 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/79 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/80 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/81 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/82 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/83 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/84 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/85 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/86 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/87 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/88 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/89 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/90 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/91 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/92 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/93 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/94 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/95 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/96 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/97 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/98 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/99 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/100 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/101 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/102 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/103 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/104 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/105 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/106 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/107 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/108 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/109 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/110 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/111 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/112 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/113 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/114 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/115 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/116 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/117 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/118 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/119 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/120 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/121 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/122 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/123 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/124 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/125 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/126 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/127 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/128 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/129 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/130 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/131 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/132 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/133 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/134 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/135 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/136 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/137 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/138 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/139 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/140 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/141 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/142 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/143 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/144 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/145 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/146 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/147 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/148 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/149 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/150 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/151 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/152 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/153 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/154 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/155 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/156 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/157 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/158 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/159 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/160 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/161 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/162 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/163 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/164 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/165 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/166 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/167 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/168 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/169 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/170 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/171 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/172 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/173 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/174 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/175 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/176 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/177 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/178 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/179 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/180 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/181 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/182 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/183 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/184 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/185 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/186 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/187 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/188 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/189 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/190 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/191 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/192 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/193 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/194 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/195 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/196 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/197 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/198 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/199 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/200 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/201 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/202 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/203 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/204 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/205 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/206 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/207 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/208 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/209 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/210 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/211 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/212 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/213 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/214 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/215 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/216 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/217 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/218 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/219 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/220 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/221 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/222 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/223 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/224 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/225 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/226 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/227 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/228 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/229 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/230 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/231 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/232 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/233 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/234 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/235 filed for Willow-ededf8 Vale.\nStorage docket b4da083142/236 filed for Willow-ededf8 Vale."
+        }
+      ],
+      "expectedAnswer": "3147"
+    },
+    {
+      "id": "weekly-21",
+      "tier": "single",
+      "budgets": {
+        "toolCalls": 4,
+        "maxRunMs": 180000,
+        "model": {
+          "calls": 4,
+          "tokens": 100000,
+          "costNanos": 1000000000000,
+          "concurrency": 1
+        }
+      },
+      "question": "Find the count for Rowan-cf475a Bay, in crates. You must use your web search tool exactly once with the exact query \"field registers Rowan-cf475a\". Read the result pages you need. Reply with only the whole number.",
+      "query": "field registers Rowan-cf475a",
+      "results": [
+        {
+          "url": "https://register.example/f85fc9db2a2016540d829c3c",
+          "title": "Rowan-cf475a Bay register",
+          "description": "Collection register for Rowan-cf475a Bay."
+        }
+      ],
+      "pages": [
+        {
+          "url": "https://register.example/f85fc9db2a2016540d829c3c",
+          "text": "Collection register for Rowan-cf475a Bay.\nRowan-cf475a Bay | crates = 5489\nFinal inventory entry."
+        }
+      ],
+      "expectedAnswer": "5489"
+    },
+    {
+      "id": "weekly-22",
+      "tier": "distractors",
+      "budgets": {
+        "toolCalls": 8,
+        "maxRunMs": 300000,
+        "model": {
+          "calls": 7,
+          "tokens": 200000,
+          "costNanos": 1000000000000,
+          "concurrency": 1
+        }
+      },
+      "question": "Find the count for Rowan-3b2546 Grove, in trays. You must use your web search tool exactly once with the exact query \"field registers Rowan-3b2546\". Read the result pages you need. Reply with only the whole number.",
+      "query": "field registers Rowan-3b2546",
+      "results": [
+        {
+          "url": "https://register.example/caed61e598ed030a17bb5cde",
+          "title": "Rowan-3b2546 Ridge register",
+          "description": "Inventory ledger for Rowan-3b2546 Ridge."
+        },
+        {
+          "url": "https://register.example/2945365558f7ce0e5c2024f1",
+          "title": "Rowan-3b2546 Annex register",
+          "description": "Inventory ledger for Rowan-3b2546 Annex."
+        },
+        {
+          "url": "https://register.example/25bbdae6ed2481868f851c4c",
+          "title": "Rowan-3b2546 Grove register",
+          "description": "Collection register for Rowan-3b2546 Grove."
+        }
+      ],
+      "pages": [
+        {
+          "url": "https://register.example/caed61e598ed030a17bb5cde",
+          "text": "Inventory ledger for Rowan-3b2546 Ridge.\nRowan-3b2546 Ridge | trays = 3634\nVerified at annual close."
+        },
+        {
+          "url": "https://register.example/2945365558f7ce0e5c2024f1",
+          "text": "Inventory ledger for Rowan-3b2546 Annex.\nRowan-3b2546 Annex | trays = 3782\nFinal inventory entry."
+        },
+        {
+          "url": "https://register.example/25bbdae6ed2481868f851c4c",
+          "text": "Collection register for Rowan-3b2546 Grove.\nRowan-3b2546 Grove | trays = 3708\nVerified at annual close."
+        }
+      ],
+      "expectedAnswer": "3708"
+    },
+    {
+      "id": "weekly-23",
+      "tier": "multi-hop",
+      "budgets": {
+        "toolCalls": 8,
+        "maxRunMs": 300000,
+        "model": {
+          "calls": 7,
+          "tokens": 200000,
+          "costNanos": 1000000000000,
+          "concurrency": 1
+        }
+      },
+      "question": "Find the combined total for Rowan-c66858 Bay and Rowan-c66858 Annex, in specimens. You must use your web search tool exactly once with the exact query \"station records Rowan-c66858\". Read the result pages you need. Reply with only the whole number.",
+      "query": "station records Rowan-c66858",
+      "results": [
+        {
+          "url": "https://register.example/239bf066f8c83573bd56e035",
+          "title": "Rowan-c66858 Annex register",
+          "description": "Collection register for Rowan-c66858 Annex."
+        },
+        {
+          "url": "https://register.example/7f6410d933f78eb3e6d9fd86",
+          "title": "Rowan-c66858 Bay register",
+          "description": "Collection register for Rowan-c66858 Bay."
+        }
+      ],
+      "pages": [
+        {
+          "url": "https://register.example/239bf066f8c83573bd56e035",
+          "text": "Collection register for Rowan-c66858 Annex.\nRowan-c66858 Annex | specimens = 25\nVerified at annual close."
+        },
+        {
+          "url": "https://register.example/7f6410d933f78eb3e6d9fd86",
+          "text": "Collection register for Rowan-c66858 Bay.\nRowan-c66858 Bay | specimens = 5637\nCount signed by the registrar."
+        }
+      ],
+      "expectedAnswer": "5662"
+    },
+    {
+      "id": "weekly-24",
+      "tier": "long-page",
+      "budgets": {
+        "toolCalls": 8,
+        "maxRunMs": 300000,
+        "model": {
+          "calls": 7,
+          "tokens": 200000,
+          "costNanos": 1000000000000,
+          "concurrency": 1
+        }
+      },
+      "question": "Find the count for Maple-c594e9 Vale, in samples. You must use your web search tool exactly once with the exact query \"field registers Maple-c594e9\". Read the result pages you need. The register is long. Read it in parts until you reach the inventory entry. Reply with only the whole number.",
+      "query": "field registers Maple-c594e9",
+      "results": [
+        {
+          "url": "https://register.example/5a0a1e0b50dcca818dcc300f",
+          "title": "Maple-c594e9 Vale register",
+          "description": "Inventory ledger for Maple-c594e9 Vale."
+        }
+      ],
+      "pages": [
+        {
+          "url": "https://register.example/5a0a1e0b50dcca818dcc300f",
+          "text": "Inventory ledger for Maple-c594e9 Vale.\nLabels checked at Maple-c594e9 Vale, entry 1999.\nLabels checked at Maple-c594e9 Vale, entry 187.\nArchive sealed at Maple-c594e9 Vale, entry 1478.\nLabels checked at Maple-c594e9 Vale, entry 5613.\nInspection complete at Maple-c594e9 Vale, entry 5493.\nForms filed at Maple-c594e9 Vale, entry 5420.\nForms filed at Maple-c594e9 Vale, entry 1427.\nLabels checked at Maple-c594e9 Vale, entry 926.\nLabels checked at Maple-c594e9 Vale, entry 5006.\nArchive sealed at Maple-c594e9 Vale, entry 1766.\nArchive sealed at Maple-c594e9 Vale, entry 5969.\nInspection complete at Maple-c594e9 Vale, entry 1520.\nLabels checked at Maple-c594e9 Vale, entry 5820.\nArchive sealed at Maple-c594e9 Vale, entry 1296.\nForms filed at Maple-c594e9 Vale, entry 231.\nInspection complete at Maple-c594e9 Vale, entry 1528.\nLabels checked at Maple-c594e9 Vale, entry 4509.\nInspection complete at Maple-c594e9 Vale, entry 3727.\nForms filed at Maple-c594e9 Vale, entry 2250.\nInspection complete at Maple-c594e9 Vale, entry 5609.\nLabels checked at Maple-c594e9 Vale, entry 4972.\nInspection complete at Maple-c594e9 Vale, entry 3654.\nForms filed at Maple-c594e9 Vale, entry 6504.\nForms filed at Maple-c594e9 Vale, entry 9056.\nForms filed at Maple-c594e9 Vale, entry 884.\nLabels checked at Maple-c594e9 Vale, entry 3091.\nForms filed at Maple-c594e9 Vale, entry 6841.\nInspection complete at Maple-c594e9 Vale, entry 3478.\nArchive sealed at Maple-c594e9 Vale, entry 2878.\nArchive sealed at Maple-c594e9 Vale, entry 4092.\nArchive sealed at Maple-c594e9 Vale, entry 2056.\nArchive sealed at Maple-c594e9 Vale, entry 8017.\nLabels checked at Maple-c594e9 Vale, entry 256.\nLabels checked at Maple-c594e9 Vale, entry 9988.\nLabels checked at Maple-c594e9 Vale, entry 2199.\nArchive sealed at Maple-c594e9 Vale, entry 9316.\nInspection complete at Maple-c594e9 Vale, entry 4212.\nInspection complete at Maple-c594e9 Vale, entry 8427.\nArchive sealed at Maple-c594e9 Vale, entry 8754.\nForms filed at Maple-c594e9 Vale, entry 1311.\nForms filed at Maple-c594e9 Vale, entry 128.\nArchive sealed at Maple-c594e9 Vale, entry 6725.\nForms filed at Maple-c594e9 Vale, entry 476.\nLabels checked at Maple-c594e9 Vale, entry 7689.\nMaple-c594e9 Vale | samples = 4157\nCount signed by the registrar.\nTransfer receipt 307ca99833/1 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/2 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/3 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/4 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/5 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/6 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/7 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/8 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/9 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/10 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/11 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/12 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/13 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/14 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/15 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/16 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/17 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/18 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/19 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/20 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/21 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/22 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/23 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/24 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/25 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/26 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/27 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/28 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/29 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/30 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/31 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/32 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/33 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/34 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/35 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/36 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/37 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/38 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/39 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/40 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/41 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/42 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/43 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/44 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/45 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/46 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/47 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/48 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/49 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/50 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/51 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/52 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/53 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/54 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/55 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/56 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/57 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/58 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/59 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/60 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/61 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/62 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/63 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/64 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/65 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/66 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/67 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/68 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/69 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/70 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/71 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/72 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/73 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/74 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/75 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/76 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/77 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/78 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/79 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/80 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/81 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/82 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/83 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/84 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/85 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/86 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/87 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/88 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/89 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/90 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/91 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/92 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/93 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/94 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/95 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/96 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/97 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/98 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/99 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/100 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/101 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/102 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/103 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/104 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/105 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/106 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/107 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/108 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/109 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/110 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/111 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/112 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/113 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/114 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/115 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/116 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/117 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/118 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/119 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/120 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/121 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/122 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/123 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/124 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/125 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/126 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/127 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/128 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/129 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/130 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/131 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/132 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/133 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/134 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/135 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/136 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/137 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/138 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/139 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/140 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/141 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/142 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/143 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/144 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/145 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/146 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/147 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/148 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/149 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/150 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/151 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/152 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/153 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/154 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/155 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/156 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/157 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/158 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/159 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/160 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/161 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/162 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/163 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/164 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/165 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/166 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/167 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/168 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/169 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/170 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/171 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/172 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/173 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/174 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/175 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/176 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/177 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/178 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/179 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/180 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/181 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/182 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/183 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/184 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/185 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/186 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/187 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/188 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/189 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/190 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/191 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/192 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/193 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/194 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/195 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/196 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/197 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/198 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/199 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/200 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/201 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/202 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/203 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/204 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/205 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/206 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/207 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/208 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/209 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/210 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/211 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/212 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/213 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/214 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/215 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/216 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/217 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/218 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/219 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/220 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/221 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/222 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/223 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/224 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/225 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/226 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/227 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/228 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/229 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/230 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/231 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/232 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/233 filed for Maple-c594e9 Vale.\nTransfer receipt 307ca99833/234 filed for Maple-c594e9 Vale."
+        }
+      ],
+      "expectedAnswer": "4157"
+    }
+  ]
+}
