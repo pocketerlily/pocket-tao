@@ -92,6 +92,14 @@ const identity = submissionIdentity(netuid, hotkey, roundHash, sha256(source));
 assert.equal(identity.id, miner.hotkeySubmissionId(netuid, hotkey, roundHash, sha256(reference)));
 assert.equal(identity.commitment, miner.commitmentPayload(identity.id));
 pass('submission ID and Raw commitment');
+if (typeof miner.commitmentPayloadHf === 'function') {
+  const repo = 'alice/pocket-harness';
+  const p2 = submissionIdentity(netuid, hotkey, roundHash, sha256(source), repo);
+  assert.equal(p2.commitment, miner.commitmentPayloadHf(identity.id, repo));
+  pass('p2 Hugging Face commitment');
+} else {
+  console.log('skipped p2 commitment comparison (platform helper unavailable)');
+}
 let signed;
 const sign = message => createHash('sha512').update(message).digest();
 const client = new miner.MinerClient(hotkey, { kind: 'sr25519', hotkey, netuid,

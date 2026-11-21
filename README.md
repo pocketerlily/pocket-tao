@@ -2,7 +2,7 @@
 
 Build a Harness that decides what to ask a model, which tools to call and what answer to return. This kit includes a standalone CLI, an editable one-file agent and the submission contract. Node 24.13 or newer runs the packer, source checks and offline tests with no package installation.
 
-## Pack and check the example
+## Pack and check your source
 
 Set `KIT_URL` to the kit's clone URL. For a real submission, get the operator's immutable round-zero JSON record and set `ROUND_ZERO` to its filename. The following commands use Bash.
 
@@ -13,16 +13,17 @@ mkdir -p out
 BASE=$(node --input-type=module -e 'import {readFileSync} from "node:fs"; console.log(JSON.parse(readFileSync(process.argv[1])).baseImageDigest)' "$ROUND_ZERO")
 ./pocket-miner pack --project examples/minimal --base-image-digest "$BASE" --out out/source.json
 ./pocket-miner check out/source.json
-./pocket-miner digest out/source.json
 ```
 
 For offline practice without an operator record, set `BASE=$(node -p '"sha256:" + "0".repeat(64)')` in place of the record lookup. The practice digest is suitable for packing and testing. A real build requires its pinned base image digest.
 
-Edit `examples/minimal/harness.mjs`, then pack to a fresh filename. Outputs are never overwritten. The check verifies canonical bytes, file paths, sizes and dependency locks. Build success, model/tool behavior, scoring, finalized registration and queue acceptance require operator infrastructure. The example guide includes the exact sandbox commands and expected case counts. [Example and self-check](examples/minimal/README.md)
+Edit `examples/minimal/harness.mjs`, then pack to a fresh filename and check it again. The check verifies canonical bytes, file paths, sizes and dependency locks. The example guide includes the exact sandbox commands and expected case counts. [Example and self-check](examples/minimal/README.md)
 
-## Identify, sign, commit and submit
+## Create a private repository and publish the file
 
-The operator publishes `NETWORK` (exact schedule name), `NETUID`, `START` (round-zero first block), `LENGTH` (normally 50400) and `ROUND_ZERO`. Set `BLOCK` to the block in which you expect the commitment to land. Use the existing registered sr25519 address as `HOTKEY` and its keyfile path as `HOTKEY_FILE`. This kit uses the standard wallet layout `<wallet directory>/<wallet name>/hotkeys/<hotkey name>`. The CLI needs only the public address and path.
+Create a **private model repository** in your Hugging Face account. Set `REPO` to its `OWNER/NAME` (at most 60 characters including the slash). Anyone can copy the source if the repository is public before the weekly cutoff.
+
+Use the operator's `NETWORK` (exact schedule name), `NETUID`, `START` (round-zero first block), `LENGTH` (normally 50400) and `ROUND_ZERO`. Set `HOTKEY` to your registered sr25519 address and `BLOCK` to the block where you expect the commitment to land.
 
 ```bash
 WEEK=$(./pocket-miner round --network "$NETWORK" --netuid "$NETUID" \
@@ -30,26 +31,46 @@ WEEK=$(./pocket-miner round --network "$NETWORK" --netuid "$NETUID" \
 ROUND_ID=$(node -p 'JSON.parse(process.argv[1]).id' "$WEEK")
 ROUND_DIGEST=$(./pocket-miner round-digest --round-zero "$ROUND_ZERO" --round-id "$ROUND_ID")
 identity=(--netuid "$NETUID" --hotkey "$HOTKEY" --round "$ROUND_DIGEST" --source out/source.json)
-wallet=("${identity[@]}" --hotkey-file "$HOTKEY_FILE")
-./pocket-miner submission-id "${identity[@]}"
-./pocket-miner sign "${wallet[@]}" --round-id "$ROUND_ID" --out out/signed.json
+./pocket-miner publish "${identity[@]}" --repo "$REPO" --out out --upload
 ```
 
-Wallet operations need Python with `bittensor==11.3.2`. Choose an existing interpreter with `--python PATH` or `POCKET_MINER_PYTHON`. Otherwise the CLI tries `.venv/bin/python` in the kit, then `python3` on PATH. For a local installation, use `python3 -m venv .venv` and `.venv/bin/python -m pip install 'bittensor==11.3.2'`. Signing checks the hotkey identity and creates an envelope locally.
+Authenticate with the Hugging Face CLI before using `--upload`. The kit prints one JSON line with the ID, commitment, repository path and upload command. For a manual upload, omit `--upload` and put the prepared file on the model repository's `main` branch at the printed path, `pocket/<64-hex-id>.json`. Keep its bytes exactly as packed.
 
-**The next command replaces your current on-chain commitment on the selected subnet.** Set `CHAIN_NETWORK` to the operator's Bittensor network selector (`test`, `finney` or its WebSocket endpoint). Review the printed ID and commitment first. The CLI refuses a commit unless you supply the write flag.
+## Commit the repository on chain
+
+**This command replaces your current commitment on the selected subnet.** Review the ID and commitment from `publish`. Set `CHAIN_NETWORK` to the operator's Bittensor network selector and `HOTKEY_FILE` to your existing keyfile at `<wallet directory>/<wallet name>/hotkeys/<hotkey name>`.
+
+Wallet operations require Python with `bittensor==11.3.2`. Choose an existing interpreter with `--python PATH` or `POCKET_MINER_PYTHON`. Otherwise the CLI tries `.venv/bin/python` in the kit, then `python3` on PATH. For a local installation, use `python3 -m venv .venv` and `.venv/bin/python -m pip install 'bittensor==11.3.2'`.
 
 ```bash
-./pocket-miner commit "${wallet[@]}" --network "$CHAIN_NETWORK" --allow-writes
+./pocket-miner commit "${identity[@]}" --repo "$REPO" --hotkey-file "$HOTKEY_FILE" \
+  --network "$CHAIN_NETWORK" --allow-writes
 ```
 
-Wait for finalization and check the actual inclusion block. If the transaction crossed a weekly boundary, derive the new round, re-sign and commit for that round. If the outcome is unclear, check the current commitment before retrying.
+Wait for finalization and check the actual inclusion block. If it crossed a weekly cutoff, derive the round for that block, publish under the new ID and commit for that round. If the outcome is unclear, check the current commitment before retrying.
+
+## Reveal after the weekly cutoff and verify
+
+After the weekly cutoff, **make the repository public within the reveal window**. The default is 300 finalized blocks after the cutoff, about one hour. A repository still private after the reveal window is disqualified for that round. The file must stay publicly available at the same path while the submission is competing or holding the title.
 
 ```bash
-./pocket-miner submit "${wallet[@]}" --round-id "$ROUND_ID" --out out/delivery.json
+./pocket-miner verify-remote "${identity[@]}" --repo "$REPO"
 ```
 
-**There is no public submission endpoint yet.** Give the operator the freshly signed delivery file within five minutes of signing. It contains the full source. The operator verifies it against the finalized commitment. When an operator supplies an HTTP intake URL, use `--endpoint "$ENDPOINT"` instead of `--out out/delivery.json` to POST a fresh envelope. HTTP success acknowledges delivery. The operator confirms admission.
+The check downloads anonymously. Only `ok` exits successfully. For `not_public`, check visibility, branch and file path. For `mismatch` or `invalid`, check the uploaded bytes against the packed source and the round's base image. For `unreachable`, retry the download.
+
+## Command reference
+
+Run `./pocket-miner --help` for all options. The following commands use the same identity arguments as the walkthrough.
+
+| Command | Use |
+| --- | --- |
+| `submission-id "${identity[@]}" [--repo OWNER/NAME]` | Preview the ID and commitment. A repository selects `p2`. Omitting it selects the direct-delivery `p1` commitment. |
+| `digest FILE` | Print the normalized source digest. |
+| `sign "${identity[@]}" --hotkey-file "$HOTKEY_FILE" --round-id "$ROUND_ID" --out FILE` | Direct delivery to an operator queue. Write a locally signed envelope containing the full source. |
+| `submit "${identity[@]}" --hotkey-file "$HOTKEY_FILE" --round-id "$ROUND_ID" --out FILE` | Direct delivery to an operator queue. Write a fresh envelope, or use `--endpoint "$ENDPOINT"` in place of `--out FILE` to POST it to an operator-supplied URL. |
+
+For direct delivery, commit without `--repo` and deliver the envelope within five minutes of signing. The operator checks it against the finalized commitment and confirms admission.
 
 ## Your own project
 

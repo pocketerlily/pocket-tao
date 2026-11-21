@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 import { parseArgs } from 'node:util';
 import { randomUUID } from 'node:crypto';
-import { link, open, unlink } from 'node:fs/promises';
+import { link, mkdir, open, unlink } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
+import { repoFile, uploadCommand, uploadSource, verifyRemote } from './lib/hugging-face.mjs';
 import { pack } from './lib/pack.mjs';
 import { roundDigest, weeklyRound } from './lib/round.mjs';
 import { canonicalSource, checkSource, readRegular, sha256 } from './lib/source.mjs';
@@ -15,9 +16,11 @@ const help = `Usage:
   pocket-miner digest FILE
   pocket-miner round --network NETWORK --netuid N --start S --length L --block B
   pocket-miner round-digest --round-zero FILE --round-id ID
-  pocket-miner submission-id --netuid N --hotkey SS58 --round DIGEST --source FILE
+  pocket-miner submission-id --netuid N --hotkey SS58 --round DIGEST --source FILE [--repo OWNER/NAME]
+  pocket-miner publish IDENTITY --repo OWNER/NAME --out DIR [--upload]
+  pocket-miner verify-remote IDENTITY --repo OWNER/NAME
   pocket-miner sign IDENTITY --round-id ID --hotkey-file PATH --out FILE
-  pocket-miner commit IDENTITY --hotkey-file PATH --network NETWORK --allow-writes
+  pocket-miner commit IDENTITY --hotkey-file PATH --network NETWORK [--repo OWNER/NAME] --allow-writes
   pocket-miner submit IDENTITY --round-id ID --hotkey-file PATH (--out FILE | --endpoint URL)
 
 IDENTITY stands for --netuid N --hotkey SS58 --round DIGEST --source FILE.
@@ -30,9 +33,11 @@ const flags = {
   'round-digest': ['round-zero', 'round-id'],
   check: [],
   digest: [],
-  'submission-id': identityFlags,
+  'submission-id': [...identityFlags, 'repo'],
+  publish: [...identityFlags, 'repo', 'out', 'upload'],
+  'verify-remote': [...identityFlags, 'repo'],
   sign: [...walletFlags, 'round-id', 'out'],
-  commit: [...walletFlags, 'network', 'allow-writes'],
+  commit: [...walletFlags, 'network', 'allow-writes', 'repo'],
   submit: [...walletFlags, 'round-id', 'out', 'endpoint']
 };
 
@@ -56,7 +61,7 @@ async function save(path, bytes) {
 async function main([command, ...args]) {
   if (!command || command === '--help' || command === 'help') return console.log(help);
   if (!Object.hasOwn(flags, command)) throw Error('Unknown command. See --help');
-  const options = Object.fromEntries(flags[command].map(key => [key, { type: key === 'allow-writes' ? 'boolean' : 'string' }]));
+  const options = Object.fromEntries(flags[command].map(key => [key, { type: ['allow-writes', 'upload'].includes(key) ? 'boolean' : 'string' }]));
   const { values, positionals } = parseArgs({ args, options, allowPositionals: command === 'digest' || command === 'check' });
   const need = key => requireValue(values, key);
   if (command === 'pack') {
@@ -82,14 +87,35 @@ async function main([command, ...args]) {
     return console.log(roundDigest(record, need('round-id')));
   }
   if (command === 'commit' && !values['allow-writes']) throw Error('Commit requires --allow-writes');
-  if (command !== 'submission-id') need('hotkey-file');
+  if (['commit', 'sign', 'submit'].includes(command)) need('hotkey-file');
+  if (command === 'publish' || command === 'verify-remote') need('repo');
   if (command === 'submit' && Boolean(values.out) === Boolean(values.endpoint)) throw Error('Choose --out or --endpoint');
   if (command === 'sign') need('out');
   if (!/^\d+$/.test(need('netuid'))) throw Error('Invalid netuid');
   const netuid = Number(values.netuid), hotkey = need('hotkey'), round = need('round');
   const source = canonicalSource(await readRegular(need('source')));
-  const identity = submissionIdentity(netuid, hotkey, round, sha256(source));
+  const identity = submissionIdentity(netuid, hotkey, round, sha256(source), values.repo);
   if (command === 'submission-id') return console.log(JSON.stringify(identity));
+  if (command === 'verify-remote') {
+    const status = await verifyRemote({ netuid, hotkey, round, id: identity.id, repo: values.repo,
+      baseImageDigest: JSON.parse(source).baseImageDigest, testBase: process.env.POCKET_MINER_HF_BASE_URL });
+    process.exitCode = status === 'ok' ? 0 : 1;
+    return console.log(status);
+  }
+  if (command === 'publish') {
+    const repoPath = repoFile(identity.id);
+    const path = join(need('out'), repoPath);
+    await mkdir(dirname(path), { recursive: true });
+    try {
+      await save(path, source);
+    } catch (error) {
+      if (error.code !== 'EEXIST' || !(await readRegular(path)).equals(source)) throw error;
+    }
+    const args = ['upload', values.repo, path.startsWith('-') ? './' + path : path, repoPath];
+    console.log(JSON.stringify({ ...identity, repoPath, uploadCommand: uploadCommand(args) }));
+    if (values.upload) await uploadSource(args);
+    return;
+  }
   const python = values.python || process.env.POCKET_MINER_PYTHON || defaultPython;
   const wallet = { hotkeyFile: resolve(values['hotkey-file']), hotkey };
   if (command === 'commit') {

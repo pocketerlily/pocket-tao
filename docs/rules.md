@@ -8,7 +8,7 @@ The operator publishes the exact network string, subnet number, first block of r
 
 Before `S` the competition has yet to open. At block `B >= S`, the round index is `floor((B - S) / L)`. Round `r` starts at `S + r*L` and includes all blocks through `C - 1`, where `C = S + (r+1)*L`. Validators wait for finalized height to reach `C`, then read the historical end-of-block snapshot at `C - 1`. A delayed validator uses that same height. Settlement stays pending if that snapshot is unavailable. A commitment included in block `C` belongs to the new round.
 
-Each registered hotkey contributes its current commitment at the snapshot. The commitment's own inclusion block determines its **original round**. The validator matches subnet, hotkey, commitment and original build round to accepted signed source. A surviving commitment automatically enters later rounds, with fresh evaluation and retry counts each time. Pre-start commitments, malformed entries, wrong-round signatures and commitments without matching source at freeze time are excluded. Delivering source after the list is frozen cannot change it.
+Each registered hotkey contributes its current commitment at the snapshot. The commitment's own inclusion block determines its **original round**. Pre-start commitments and malformed entries are excluded. For direct delivery (`p1`), validators match the commitment to signed source already accepted for that subnet, hotkey and original build round when the list freezes. For Hugging Face delivery (`p2`), the snapshot fixes the ID and repository, and miners have a window to reveal the committed bytes. A surviving commitment automatically enters later rounds, with fresh evaluation and retry counts each time.
 
 ## Derive the identifiers
 
@@ -16,8 +16,14 @@ Use compact JavaScript `JSON.stringify` encoded as UTF-8, decimal integers and n
 
 1. `roundId = H("pocket-weekly-round-v1\n" + J([network,netuid,S,L,r]))`. The array `["test",1,12345,50400,2]` yields `sha256:731a12db45987c9f3cd29ed1663d35dea3f7fc41d8041abbb5a92337c9913abc`.
 2. Copy the published round-zero record, replacing only `id` with `roundId`. Construct its fields in order as `id, baseImageDigest, rootfsDigest, environmentDigest, opensAt, closesAt, maxSubmissions, maxPerMiner`. All three digest fields are prefixed. Times are Unix milliseconds and quotas are integers. Every week retains the published window and quotas. `roundDigest = H("pocket-build-round-v1\n" + J(record))`.
-3. `sourceDigest = H(canonicalSourceBytes)`. Compute `submissionId = H("pocket-submission-v2\n" + J([netuid,hotkey,roundDigest,sourceDigest]))`. The raw chain commitment is the ASCII string `p1:` plus the 64 hex digits of the ID.
-4. Sign the submit command using the actual build round ID, round digest and exact source bytes. Queue acceptance uses the build record's wall-clock window and quotas. Round assignment uses the commitment's block. A transaction crossing the boundary needs a new commitment and a fresh signature for its actual round.
+3. `sourceDigest = H(canonicalSourceBytes)`. Compute `submissionId = H("pocket-submission-v2\n" + J([netuid,hotkey,roundDigest,sourceDigest]))`. Use the 64 lowercase hex digits of this ID as `<hex>` in either delivery form.
+4. For Hugging Face delivery, put `p2:<hex>:OWNER/NAME` on chain as a Raw ASCII field of at most 128 bytes. For direct delivery to an operator queue, put `p1:<hex>` on chain and sign the submit command using the actual build round ID, round digest and exact source bytes. Queue acceptance uses the build record's wall-clock window and quotas. A transaction crossing the cutoff needs an ID for its actual round.
+
+## Reveal Hugging Face source
+
+Upload the canonical source bytes to `pocket/<hex>.json` on the `main` branch of the committed model repository. You may keep the repository private through the weekly cutoff. Anyone can copy source made public early. After the cutoff, make the repository public within `revealBlocks` finalized blocks (default 300, about one hour). Keep the file publicly available while the submission is competing or holding the title.
+
+Validators fetch anonymously and check the canonical bytes and the base image against the original build round. They hash the downloaded bytes and recompute the ID using the subnet, committing hotkey and original round digest. A private or missing file can still be revealed within the window. After the window, a file that remains private or missing disqualifies the submission for that round.
 
 ## How settlement works
 
@@ -25,6 +31,10 @@ Validators settle sequentially from round zero. Each listed submission needs a c
 
 | Outcome | Consequence |
 | --- | --- |
+| `source_invalid` | Disqualify for this round. The file exceeds the source limits, fails canonical source validation or uses the wrong base image. |
+| `source_mismatch` | Disqualify for this round. The ID recomputed from the downloaded source differs from the commitment. |
+| `source_unavailable` | Disqualify for this round when the file is still private or missing after the reveal window. |
+| Hugging Face outage | Retry. An outage on Hugging Face's side does not count against the miner, including after the reveal window. |
 | Source build fails or the build produces an invalid artifact | Disqualify the submission for this round and record the cause. |
 | A case completes with a wrong answer or behavior | Fail that case. Other case scores still count. |
 | Guest crashes, violates the protocol, gives malformed output or exceeds its execution time, step or resource budget | Fail that case and disqualify the submission for this round, including when earlier cases passed. |

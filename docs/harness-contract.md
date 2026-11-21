@@ -103,7 +103,27 @@ Cluster workers use one-time warm pods. With `POCKET_CLUSTER_ACTIVATION=1`, sign
 
 The weekly rules define how to derive the round ID and build-record digest. The CLI's `round` returns JSON with a numeric `index` and string `id`, or an error for a pre-start block. `round-digest` reads the original record, substitutes the weekly ID and prints the prefixed digest. The operator's original window and quotas are retained. [Round record and worked example](rules.md)
 
-1. Bind the canonical source digest and round digest to the subnet and registered sr25519 hotkey. The submission ID hashes `pocket-submission-v2\n` followed by compact JSON of `[netuid,hotkey,roundDigest,sourceDigest]`. The chain Raw field contains exactly 67 ASCII bytes, `p1:` followed by the ID's 64 hex digits. Here and below `\n` denotes one LF byte.
+Both delivery forms use the same submission ID. Hash `pocket-submission-v2\n` followed by compact JSON of `[netuid,hotkey,roundDigest,sourceDigest]`. Here `\n` denotes one LF byte and `<hex>` denotes the ID's 64 lowercase hex digits.
+
+### Hugging Face model repository (`p2`)
+
+Put the ASCII string `p2:<hex>:OWNER/NAME` in one on-chain Raw field. The repository ID must match `^[A-Za-z0-9][A-Za-z0-9._-]{0,41}/[A-Za-z0-9][A-Za-z0-9._-]{0,95}$`, contain neither `..` nor `--`, and have at most 60 characters including the slash. The whole field fits in 128 bytes.
+
+Upload exactly the canonical source bytes to `pocket/<hex>.json` on branch `main`. The repository may be private until the weekly cutoff. Make it public within `revealBlocks` finalized blocks after the cutoff (default 300, about one hour). Keep the file available while competing or holding the title.
+
+Validators request `/OWNER/NAME/resolve/main/pocket/<hex>.json` from Hugging Face over HTTPS without credentials or cookies. They follow at most five redirects to the Hub or its allowed Hugging Face subdomains, allow 60 seconds for the entire download and stop if the body exceeds the 36 MiB source limit. The downloaded bytes must pass the canonical checks above, including format-specific limits. The base image must match the round record for the commitment's inclusion block. Using the subnet, committing hotkey, that round's digest and the SHA-256 of the downloaded bytes must reproduce the committed ID.
+
+| Outcome | Rule for this round |
+| --- | --- |
+| `source_invalid` | Disqualify an oversized or noncanonical bundle, an invalid source or a base image incompatible with the round. |
+| `source_mismatch` | Disqualify a valid bundle whose recomputed submission ID differs from the commitment. |
+| `source_unavailable` | Disqualify a file still private or missing after the reveal window (HTTP 401, 403 or 404). |
+
+Validators retry Hugging Face outages without holding them against the miner. The local `verify-remote` check uses the packed file as its reference for the expected ID and base image. Pack with the base digest from the operator's round record.
+
+### Direct delivery to an operator queue (`p1`)
+
+1. Put `p1:<hex>` in the chain Raw field (exactly 67 ASCII bytes).
 2. Construct the request fields in order as `version` (`pocket-miner-v2`), `identity` (fields `kind:"sr25519", hotkey`), numeric `netuid`, `at` in Unix milliseconds, and `command`. The command's fields in order are `action:"submit", roundId, roundDigest, sourceDigest, source`. The final value is the entire canonical bundle as a **string**. Sign the UTF-8 bytes of `pocket-miner-command-v2\n` followed by the prefixed SHA-256 of the compact request JSON. Send `{request,signature}` with the 64-byte signature in lowercase hex.
 3. The queue rejects malformed or oversized input, wrong subnet, failed signature, noncanonical source, digest mismatch, unregistered hotkey or a finalized current commitment different from the expected one. The envelope limit is twice 36 MiB plus 4,096 bytes. Envelopes over 300,000 bytes require the tree format. The timestamp must be within five minutes of the validator clock at verification and again after the chain read.
 4. The round must exist with matching digest and base. A new ID must fit both round and per-miner quotas and arrive during `opensAt <= now < closesAt`. An authenticated retry of an accepted ID can retrieve its existing record after closing. Successful admission queues a build. Evaluation still requires a valid artifact, a compatible runner and compliant guest behavior. An operator can ingest the signed envelope directly. There is no public intake URL.
