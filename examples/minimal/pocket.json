@@ -1,0 +1,5 @@
+{
+  "format": "pocket-node-source-v1",
+  "entrypoint": "build.mjs",
+  "files": ["build.mjs", "harness.mjs"]
+}

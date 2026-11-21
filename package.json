@@ -1,0 +1,13 @@
+{
+  "name": "pocket-miner",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "engines": { "node": ">=24.13.0" },
+  "files": ["pocket-miner", "lib/", "examples/minimal/", "docs/", "README.md"],
+  "bin": { "pocket-miner": "./pocket-miner" },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 tests/*.test.mjs",
+    "conformance": "node scripts/conformance.mjs"
+  }
+}

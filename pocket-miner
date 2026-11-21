@@ -1,0 +1,114 @@
+#!/usr/bin/env node
+import { parseArgs } from 'node:util';
+import { randomUUID } from 'node:crypto';
+import { link, open, unlink } from 'node:fs/promises';
+import { dirname, join, resolve } from 'node:path';
+import { pack } from './lib/pack.mjs';
+import { roundDigest, weeklyRound } from './lib/round.mjs';
+import { canonicalSource, checkSource, readRegular, sha256 } from './lib/source.mjs';
+import { postEnvelope, signedSubmission, submissionIdentity } from './lib/submission.mjs';
+import { defaultPython, walletCall } from './lib/wallet.mjs';
+
+const help = `Usage:
+  pocket-miner pack [--project DIR] --base-image-digest DIGEST --out FILE
+  pocket-miner check FILE
+  pocket-miner digest FILE
+  pocket-miner round --network NETWORK --netuid N --start S --length L --block B
+  pocket-miner round-digest --round-zero FILE --round-id ID
+  pocket-miner submission-id --netuid N --hotkey SS58 --round DIGEST --source FILE
+  pocket-miner sign IDENTITY --round-id ID --hotkey-file PATH --out FILE
+  pocket-miner commit IDENTITY --hotkey-file PATH --network NETWORK --allow-writes
+  pocket-miner submit IDENTITY --round-id ID --hotkey-file PATH (--out FILE | --endpoint URL)
+
+IDENTITY stands for --netuid N --hotkey SS58 --round DIGEST --source FILE.
+Set --python PATH or POCKET_MINER_PYTHON to select the Bittensor interpreter.`;
+const identityFlags = ['netuid', 'hotkey', 'round', 'source'];
+const walletFlags = [...identityFlags, 'hotkey-file', 'python'];
+const flags = {
+  pack: ['project', 'base-image-digest', 'out'],
+  round: ['network', 'netuid', 'start', 'length', 'block'],
+  'round-digest': ['round-zero', 'round-id'],
+  check: [],
+  digest: [],
+  'submission-id': identityFlags,
+  sign: [...walletFlags, 'round-id', 'out'],
+  commit: [...walletFlags, 'network', 'allow-writes'],
+  submit: [...walletFlags, 'round-id', 'out', 'endpoint']
+};
+
+function requireValue(values, name) {
+  if (!values[name]) throw Error('Missing --' + name);
+  return values[name];
+}
+
+async function save(path, bytes) {
+  // Publish only a complete file, even when two CLI processes choose the same name.
+  const temp = join(dirname(path), '.pocket-miner-' + randomUUID());
+  const file = await open(temp, 'wx', 0o600);
+  try {
+    try { await file.writeFile(bytes); } finally { await file.close(); }
+    await link(temp, path);
+  } finally {
+    await unlink(temp);
+  }
+}
+
+async function main([command, ...args]) {
+  if (!command || command === '--help' || command === 'help') return console.log(help);
+  if (!Object.hasOwn(flags, command)) throw Error('Unknown command. See --help');
+  const options = Object.fromEntries(flags[command].map(key => [key, { type: key === 'allow-writes' ? 'boolean' : 'string' }]));
+  const { values, positionals } = parseArgs({ args, options, allowPositionals: command === 'digest' || command === 'check' });
+  const need = key => requireValue(values, key);
+  if (command === 'pack') {
+    const path = need('out');
+    const bytes = await pack(need('base-image-digest'), values.project);
+    await save(path, bytes);
+    return console.log(sha256(bytes));
+  }
+  if (command === 'digest' || command === 'check') {
+    if (positionals.length !== 1) throw Error('Provide one source file');
+    const bytes = await readRegular(positionals[0]);
+    return console.log(command === 'check' ? checkSource(bytes) : sha256(canonicalSource(bytes)));
+  }
+  if (command === 'round') {
+    const numbers = ['netuid', 'start', 'length', 'block'].map(key => {
+      if (!/^\d+$/.test(need(key))) throw Error('Invalid --' + key);
+      return Number(values[key]);
+    });
+    return console.log(JSON.stringify(weeklyRound(need('network'), ...numbers)));
+  }
+  if (command === 'round-digest') {
+    const record = JSON.parse(await readRegular(need('round-zero'), 65536));
+    return console.log(roundDigest(record, need('round-id')));
+  }
+  if (command === 'commit' && !values['allow-writes']) throw Error('Commit requires --allow-writes');
+  if (command !== 'submission-id') need('hotkey-file');
+  if (command === 'submit' && Boolean(values.out) === Boolean(values.endpoint)) throw Error('Choose --out or --endpoint');
+  if (command === 'sign') need('out');
+  if (!/^\d+$/.test(need('netuid'))) throw Error('Invalid netuid');
+  const netuid = Number(values.netuid), hotkey = need('hotkey'), round = need('round');
+  const source = canonicalSource(await readRegular(need('source')));
+  const identity = submissionIdentity(netuid, hotkey, round, sha256(source));
+  if (command === 'submission-id') return console.log(JSON.stringify(identity));
+  const python = values.python || process.env.POCKET_MINER_PYTHON || defaultPython;
+  const wallet = { hotkeyFile: resolve(values['hotkey-file']), hotkey };
+  if (command === 'commit') {
+    const result = await walletCall(python, { ...wallet, method: 'commit', netuid, commitment: identity.commitment,
+      network: need('network'), allowWrites: values['allow-writes'] });
+    return console.log(JSON.stringify(result));
+  }
+  const bytes = await signedSubmission({ netuid, hotkey, round, roundId: need('round-id'), source },
+    message => walletCall(python, { ...wallet, method: 'sign', message: message.toString('ascii') }));
+  if (values.out) await save(values.out, bytes);
+  else await postEnvelope(values.endpoint, bytes);
+  console.log(JSON.stringify(identity));
+}
+
+main(process.argv.slice(2)).catch(error => {
+  // System and argument-parser errors may echo paths or supplied option values.
+  const messages = { EEXIST: 'Output file already exists', ENOENT: 'File not found', EACCES: 'Permission denied' };
+  const text = error instanceof TypeError ? 'Invalid arguments or transport failure' :
+    error.code ? (messages[error.code] ?? 'File or argument error') : error.message;
+  console.error(process.argv[2] === 'check' ? 'Source check failed — ' + text : text);
+  process.exitCode = 1;
+});
