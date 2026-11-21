@@ -34,7 +34,7 @@ The gate uses deterministic model replays. Every submission must pass both check
 
 ## Scored tasks
 
-Each round has 24 generated research tasks by default, six in each tier. The operator publishes a list of live models, each answering through the standard model interface. Every eligible submission runs the same task set once per model, with the same budgets. The eligibility gate runs once per submission. The generator uses the SHA-256 seed `sha256("pocket-weekly-tasks-v1\n" + JSON.stringify([roundId, cutoffBlockHash]))`, with one LF byte after `v1` and compact UTF-8 JSON. The cutoff block hash makes the tasks unknowable before the cutoff and reproducible afterwards.
+Each round has 28 generated tasks by default: 24 short research tasks, six in each of the four short tiers, and four long tasks, two in each long tier. The operator publishes a list of live models, each answering through the standard model interface. Every eligible submission runs the same task set once per model, with the same budgets. The eligibility gate runs once per submission. The generator uses the SHA-256 seed `sha256("pocket-weekly-tasks-v1\n" + JSON.stringify([roundId, cutoffBlockHash]))`, with one LF byte after `v1` and compact UTF-8 JSON. The cutoff block hash makes the tasks unknowable before the cutoff and reproducible afterwards.
 
 | Tier | What the Harness must do | Tool requests per task | Model calls per task | Tokens per task |
 | --- | --- | ---: | ---: | ---: |
@@ -42,12 +42,14 @@ Each round has 24 generated research tasks by default, six in each tier. The ope
 | `distractors` | Find and read the relevant page among misleading results. | 8 | 7 | 20,000 |
 | `multi-hop` | Read two pages and add the two values. | 8 | 7 | 20,000 |
 | `long-page` | Follow the read cursor to find the value further down a page. | 8 | 7 | 48,000 |
+| `recall` | Answer a question about facts given earlier in one nine-message conversation that is longer than the per-call input cap. | none | 24 | 90,000 |
+| `collect` | Search once, read all twelve result pages (two of them long) and report the total of their values. | 20 | 24 | 120,000 |
 
-The budgets are upper limits. A single-tier task allows 180 seconds and every other tier 300 seconds. Each model call can return at most 1,024 tokens. The final reply must contain only the answer as a decimal whole number. The validator also checks that the required search and page reads actually happened. In a real run, a model claimed it had searched but never called the search tool and earned zero for the task. Make sure the Harness sends the tool requests.
+The budgets are upper limits. A `single` task allows 180 seconds, the other short tiers 300 seconds, and the long tiers 600 seconds. In `recall` the nine messages arrive in order in one chat, the way consecutive messages reach a Harness in production, and every model call is capped at 6,000 input tokens, so the conversation cannot be replayed whole: the Harness has to compact, summarise or store what matters as it goes. No web tools are offered in `recall`; the Harness's own conversation-history and memory tools remain usable. A call rejected for exceeding the cap is a failed call, not a disqualification. Each model call can return at most 1,024 tokens. The final reply must contain only the answer as a decimal whole number. The validator also checks that the required search and page reads actually happened. In a real run, a model claimed it had searched but never called the search tool and earned zero for the task. Make sure the Harness sends the tool requests.
 
-Each task passed on each model earns one point. The limits above apply per task and per model. A wrong answer, missing evidence or an exhausted budget earns zero for that task on that model alone. A crash or protocol violation disqualifies the submission for the round. The score is the points earned divided by 24 times the number of models, which is the plain average of the per-model pass rates. The highest positive score wins, with ties going to the earlier commitment.
+Each task passed on each model earns one point. The limits above apply per task and per model. A wrong answer, missing evidence or an exhausted budget earns zero for that task on that model alone. A crash or protocol violation disqualifies the submission for the round. The score is the points earned divided by 28 times the number of models, which is the plain average of the per-model pass rates. The highest positive score wins, with ties going to the earlier commitment.
 
-The operator's generator also produced the practice set. Each entry in `tasks` has a `question` for the model, a search `query`, the search `results` and the `pages` available to read. Compare the final reply with `expectedAnswer`. The `tier` identifies the task type and `budgets` lists its tool, time and model limits. [Practice set](../practice/practice-set.json)
+The operator's generator also produced the practice set. Each entry in `tasks` has a `question` for the model, a search `query`, the search `results` and the `pages` available to read. A `recall` entry has `messages` instead: the nine user messages in order. Compare the final reply with `expectedAnswer`. The `tier` identifies the task type and `budgets` lists its tool, time and model limits. [Practice set](../practice/practice-set.json)
 
 ## How settlement works
 
@@ -71,7 +73,7 @@ The default infrastructure attempt limit is three, configurable to a positive sa
 - Only positive scores can win. Highest score wins, then earliest commitment block, then lowest UID in the cutoff snapshot. Challengers need no minimum margin. Record the winner's hotkey, original submission and score once per round.
 - The previous settled result stays in effect until the new result is ready. The new champion takes effect at the next available weight-update interval. An interval already sent, or with unknown receipt, gets no second send.
 - Before each update, look up the champion hotkey's current UID at the latest finalized snapshot. A new submission during the reward week preserves the title. Once deregistration is observed, the title expires for the rest of that week. A new holder of the old UID cannot inherit it.
-- Before the first settlement, after an empty round or a round without positive scores, or after the champion deregisters, a configured `emptyRoundUid` receives the full 65,535 weight. Operators should use a registered owner-associated UID. Recycling or burning depends on subnet settings. Without that fallback the validator reports `all_zero` and skips the update.
+- After an empty round or a round without positive scores, or after the champion deregisters, a configured `emptyRoundUid` receives the full 65,535 weight. Operators should use a registered owner-associated UID. Recycling or burning depends on subnet settings. Without that fallback the validator reports `all_zero` and skips the update.
 
 ## Still undecided
 

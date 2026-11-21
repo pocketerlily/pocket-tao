@@ -1,29 +1,171 @@
-# Pocket miner kit
+<div align="center">
 
-Build a Harness that decides what to ask a model, which tools to call and what answer to return. This kit includes a standalone CLI, an editable one-file agent and the submission contract. Node 24.13 or newer runs the packer, source checks and offline tests with no package installation.
+<img src="assets/pocket.png" width="112" alt="Pocket">
 
-## Pack and check your source
+# Pocket
 
-Set `KIT_URL` to the kit's clone URL. For a real submission, get the operator's immutable round-zero JSON record and set `ROUND_ZERO` to its filename. The following commands use Bash.
+**An open RSI loop for agent harnesses.**
+
+Miners compete every week to build the best Engine for personal AI agents.<br>
+One champion takes all miner emission, and becomes the baseline everyone has to beat.
+
+[![Bittensor](https://img.shields.io/badge/Bittensor-subnet_26-111111?style=flat-square)](https://usepocket.fun/docs/how-the-subnet-works)
+[![Network](https://img.shields.io/badge/network-mainnet-111111?style=flat-square)](#round-parameters)
+[![Round](https://img.shields.io/badge/round-1_week-ff7a1a?style=flat-square)](docs/rules.md)
+[![Reward](https://img.shields.io/badge/reward-winner_takes_all-ff7a1a?style=flat-square)](docs/rules.md#who-gets-paid)
+[![Node](https://img.shields.io/badge/node-%E2%89%A5_24.13-111111?style=flat-square)](#quick-start)
+
+[Website](https://usepocket.fun) · [Champions](https://usepocket.fun/champions) · [Docs](https://usepocket.fun/docs) · [Rules](docs/rules.md) · [Harness contract](docs/harness-contract.md)
+
+</div>
+
+---
+
+## What you are building
+
+Pocket is a desktop app where every agent has its own cloud computer. The part that decides
+*how an agent works* — what to ask the model, which tool to call next, what to remember, when to
+stop — is a replaceable program called the **Harness**. Users see it as the agent's **Engine**.
+
+This repository is everything a miner needs to write one, pack it, and enter the weekly round.
+
+```mermaid
+flowchart LR
+    A([Write a Harness]) --> B[Pack and check]
+    B --> C[(Private Hugging Face repo)]
+    C --> D{{Commit on chain}}
+    D --> E[/Weekly cutoff/]
+    E --> F[Reveal]
+    F --> G[[Gate, then scored tasks]]
+    G --> H([Champion])
+    H -. becomes the bar to beat .-> A
+```
+
+> [!NOTE]
+> Miners submit **source code only**. There is no compute to rent and nothing to keep online:
+> the validator builds and runs your Harness in its own sandbox.
+
+## The week at a glance
+
+| | When | What happens |
+| :-: | --- | --- |
+| **1** | Any time before the cutoff | Commit your submission on chain. Your latest commitment at the cutoff is the one that counts, and it carries over to later rounds until you replace it. |
+| **2** | Cutoff, every 50,400 blocks | The list of entrants is frozen. The task set is derived from the cutoff block's hash, so nobody can know the tasks beforehand. |
+| **3** | Within 300 blocks after it (~1 hour) | Make your repository public. The validator downloads the file and checks it against your commitment. |
+| **4** | Evaluation | Eligibility gate first, then the scored tasks on every published model. |
+| **5** | Settlement | Highest score above zero wins. Ties go to the earlier commitment. The champion receives all miner emission for the following week. |
+
+## Scoring
+
+Every eligible submission gets the **same tasks, the same models and the same budgets**.
+A task passed on a model is one point; the score is the plain average across models.
+
+| Tier | The agent has to | Tool requests | Model calls | Tokens |
+| --- | --- | :-: | :-: | --: |
+| `single` | Search once and read one page | 4 | 4 | 16,000 |
+| `distractors` | Pick the right page among misleading results | 8 | 7 | 20,000 |
+| `multi-hop` | Combine values from two pages | 8 | 7 | 20,000 |
+| `long-page` | Page through a long document to the answer | 8 | 7 | 48,000 |
+| `recall` | Answer from a conversation longer than the model's window | – | 24 | 90,000 |
+| `collect` | Gather one value from each of twelve pages | 20 | 24 | 120,000 |
+
+Limits are per task and per model. Going over a limit, or giving a wrong answer, loses that one task.
+A crash or protocol violation disqualifies the submission for the round.
+
+> [!IMPORTANT]
+> The validator checks evidence, not just the number. A model that says it searched without
+> calling the search tool scores zero, and a Harness that replays a whole conversation into
+> every call cannot pass `recall`. Making tools really get used, and keeping long context
+> under control, is exactly what is being measured.
+
+<details>
+<summary><b>The eligibility gate</b></summary>
+
+<br>
+
+Before any scored task runs, a submission must pass two checks with a deterministic replayed
+model, at no cost to anyone:
+
+1. **Four web-agent scenes**: search and read, dynamic page actions, a page carrying a prompt
+   injection, and handing control back to the user. Failing one ends the round for that
+   submission (`gate_failed`).
+2. **Production start**: the Harness is started in activation mode, checkpointed while it
+   waits, restored, and must then serve a scene (`activation_unsupported` otherwise).
+
+The second check exists because the champion's Engine is meant to run for real users.
+[Production start contract](docs/harness-contract.md#production-start)
+
+</details>
+
+<details>
+<summary><b>What you can and cannot know in advance</b></summary>
+
+<br>
+
+You can know the generator's task families, the budgets, the gate and the answer format, and
+you can practise on any seed. You cannot know the round's actual tasks: the seed is
+
+```js
+sha256("pocket-weekly-tasks-v1\n" + JSON.stringify([roundId, cutoffBlockHash]))
+```
+
+and that block hash does not exist until the cutoff. After the cutoff anyone can reproduce the set.
+A generated [practice set](practice/practice-set.json) is included.
+
+</details>
+
+## Quick start
+
+Node 24.13 or newer. Packing, checking and the offline tests need no package installation.
 
 ```bash
-git clone "$KIT_URL" pocket-miner
-cd pocket-miner
+git clone https://github.com/pocketerlily/pocket-tao.git
+cd pocket-tao
+npm test
+```
+
+Pack the included example and check it the way the validator's admission does:
+
+```bash
 mkdir -p out
+BASE=$(node -p '"sha256:" + "0".repeat(64)')   # practice digest; a real entry uses the round's
+./pocket-miner pack --project examples/minimal --base-image-digest "$BASE" --out out/source.json
+./pocket-miner check out/source.json
+```
+
+Then open [`examples/minimal/harness.mjs`](examples/minimal/harness.mjs). It is a complete agent
+in under 200 lines of built-in Node: ask the model, run one tool, feed the result back, repeat.
+It passes the gate and most short tasks, and loses the long ones. That gap is the competition.
+
+## Entering a round
+
+<details open>
+<summary><b>1 · Pack against the round's base image</b></summary>
+
+<br>
+
+Take the operator's round-zero record (see [Round parameters](#round-parameters)) and set
+`ROUND_ZERO` to its filename.
+
+```bash
 BASE=$(node --input-type=module -e 'import {readFileSync} from "node:fs"; console.log(JSON.parse(readFileSync(process.argv[1])).baseImageDigest)' "$ROUND_ZERO")
 ./pocket-miner pack --project examples/minimal --base-image-digest "$BASE" --out out/source.json
 ./pocket-miner check out/source.json
 ```
 
-For offline practice without an operator record, set `BASE=$(node -p '"sha256:" + "0".repeat(64)')` in place of the record lookup. The practice digest is suitable for packing and testing. A real build requires its pinned base image digest.
+The check verifies canonical bytes, file paths, sizes and dependency locks.
+[Example and sandbox self-check](examples/minimal/README.md)
 
-Edit `examples/minimal/harness.mjs`, then pack to a fresh filename and check it again. The check verifies canonical bytes, file paths, sizes and dependency locks. The example guide includes the exact sandbox commands and expected case counts. [Example and self-check](examples/minimal/README.md)
+</details>
 
-## Create a private repository and publish the file
+<details>
+<summary><b>2 · Publish to a private Hugging Face repository</b></summary>
 
-Create a **private model repository** in your Hugging Face account. Set `REPO` to its `OWNER/NAME` (at most 60 characters including the slash). Anyone can copy the source if the repository is public before the weekly cutoff.
+<br>
 
-Use the operator's `NETWORK` (exact schedule name), `NETUID`, `START` (round-zero first block), `LENGTH` (normally 50400) and `ROUND_ZERO`. Set `HOTKEY` to your registered sr25519 address and `BLOCK` to the block where you expect the commitment to land.
+Create a **private model repository** and set `REPO` to its `OWNER/NAME` (60 characters at most,
+slash included). Set `HOTKEY` to your registered sr25519 address and `BLOCK` to the block where
+you expect the commitment to land.
 
 ```bash
 WEEK=$(./pocket-miner round --network "$NETWORK" --netuid "$NETUID" \
@@ -34,59 +176,126 @@ identity=(--netuid "$NETUID" --hotkey "$HOTKEY" --round "$ROUND_DIGEST" --source
 ./pocket-miner publish "${identity[@]}" --repo "$REPO" --out out --upload
 ```
 
-Authenticate with the Hugging Face CLI before using `--upload`. The kit prints one JSON line with the ID, commitment, repository path and upload command. For a manual upload, omit `--upload` and put the prepared file on the model repository's `main` branch at the printed path, `pocket/<64-hex-id>.json`. Keep its bytes exactly as packed.
+Authenticate with the Hugging Face CLI before using `--upload`. The kit never reads or stores your
+token. Without `--upload` it prints the exact upload command; the file belongs on the `main`
+branch at `pocket/<64-hex-id>.json`, byte for byte as packed.
 
-## Commit the repository on chain
+> [!WARNING]
+> A repository that is public before the cutoff can be copied by anyone.
 
-**This command replaces your current commitment on the selected subnet.** Review the ID and commitment from `publish`. Set `CHAIN_NETWORK` to the operator's Bittensor network selector and `HOTKEY_FILE` to your existing keyfile at `<wallet directory>/<wallet name>/hotkeys/<hotkey name>`.
+</details>
 
-Wallet operations require Python with `bittensor==11.3.2`. Choose an existing interpreter with `--python PATH` or `POCKET_MINER_PYTHON`. Otherwise the CLI tries `.venv/bin/python` in the kit, then `python3` on PATH. For a local installation, use `python3 -m venv .venv` and `.venv/bin/python -m pip install 'bittensor==11.3.2'`.
+<details>
+<summary><b>3 · Commit on chain</b></summary>
+
+<br>
+
+Wallet operations need Python with `bittensor==11.3.2` (`--python PATH`, `POCKET_MINER_PYTHON`,
+`.venv/bin/python` in the kit, or `python3` on PATH).
 
 ```bash
 ./pocket-miner commit "${identity[@]}" --repo "$REPO" --hotkey-file "$HOTKEY_FILE" \
   --network "$CHAIN_NETWORK" --allow-writes
 ```
 
-Wait for finalization and check the actual inclusion block. If it crossed a weekly cutoff, derive the round for that block, publish under the new ID and commit for that round. If the outcome is unclear, check the current commitment before retrying.
+> [!CAUTION]
+> This replaces your current commitment on the subnet. Nothing is written without
+> `--allow-writes`. Wait for finalization and check the inclusion block: if it crossed a weekly
+> cutoff, derive the round for that block, publish under the new ID and commit again.
 
-## Reveal after the weekly cutoff and verify
+</details>
 
-After the weekly cutoff, **make the repository public within the reveal window**. The default is 300 finalized blocks after the cutoff, about one hour. A repository still private after the reveal window is disqualified for that round. The file must stay publicly available at the same path while the submission is competing or holding the title.
+<details>
+<summary><b>4 · Reveal after the cutoff, then verify</b></summary>
+
+<br>
+
+Make the repository public within the reveal window: 300 finalized blocks after the cutoff,
+about one hour. Then check it exactly the way a validator will, anonymously:
 
 ```bash
 ./pocket-miner verify-remote "${identity[@]}" --repo "$REPO"
 ```
 
-The check downloads anonymously. Only `ok` exits successfully. For `not_public`, check visibility, branch and file path. For `mismatch` or `invalid`, check the uploaded bytes against the packed source and the round's base image. For `unreachable`, retry the download.
+| Result | Meaning |
+| --- | --- |
+| `ok` | Validators can fetch it and it matches your commitment. |
+| `not_public` | Check visibility, branch and file path. |
+| `mismatch` / `invalid` | The uploaded bytes differ from the packed source or the round's base image. |
+| `unreachable` | Retry the download. |
 
-## Command reference
+A repository still private after the window is out for that round. Keep the file available at
+the same path while the submission is competing or holding the title. Outages on Hugging Face's
+side are retried and are not held against you.
 
-Run `./pocket-miner --help` for all options. The following commands use the same identity arguments as the walkthrough.
+</details>
+
+## Round parameters
+
+| Parameter | Value |
+| --- | --- |
+| `CHAIN_NETWORK` | `finney` |
+| `NETUID` | `26` |
+| `LENGTH` | `50400` blocks, about one week |
+| Reveal window | `300` blocks after each cutoff |
+| `NETWORK`, `START`, `ROUND_ZERO` | Published in this repository with round zero |
+| Evaluation models | Published in this repository with round zero |
+
+## Your own Harness
+
+Put a `pocket.json` in your project root listing every file that should enter the build, then
+`./pocket-miner pack --project DIR`. The packer reads the manifest and the listed files; it never
+executes your build recipe. Projects with dependencies vendor them and declare each exact version.
+
+| Read this | For |
+| --- | --- |
+| [Harness contract](docs/harness-contract.md) | Manifest, size limits, the worker protocol, model and tool interfaces, production start |
+| [Rules](docs/rules.md) | Rounds, identifiers, reveal, gate, scoring, settlement, who gets paid |
+| [Minimal example](examples/minimal/README.md) | A working agent and the sandbox commands to test it |
+
+<details>
+<summary><b>Command reference</b></summary>
+
+<br>
+
+`./pocket-miner --help` lists every option.
 
 | Command | Use |
 | --- | --- |
-| `submission-id "${identity[@]}" [--repo OWNER/NAME]` | Preview the ID and commitment. A repository selects `p2`. Omitting it selects the direct-delivery `p1` commitment. |
+| `pack` | Build the canonical source bundle from a project. |
+| `check FILE` | Apply the admission checks locally. |
 | `digest FILE` | Print the normalized source digest. |
-| `sign "${identity[@]}" --hotkey-file "$HOTKEY_FILE" --round-id "$ROUND_ID" --out FILE` | Direct delivery to an operator queue. Write a locally signed envelope containing the full source. |
-| `submit "${identity[@]}" --hotkey-file "$HOTKEY_FILE" --round-id "$ROUND_ID" --out FILE` | Direct delivery to an operator queue. Write a fresh envelope, or use `--endpoint "$ENDPOINT"` in place of `--out FILE` to POST it to an operator-supplied URL. |
+| `round`, `round-digest` | Derive the weekly round and its digest. |
+| `submission-id` | Preview the ID and commitment. `--repo` selects a Hugging Face commitment. |
+| `publish` | Prepare, and optionally upload, the repository file. |
+| `commit` | Write the commitment on chain. Requires `--allow-writes`. |
+| `verify-remote` | Fetch your published file as a validator would. |
+| `sign`, `submit` | Direct delivery to an operator queue, for operators who offer one. |
 
-For direct delivery, commit without `--repo` and deliver the envelope within five minutes of signing. The operator checks it against the finalized commitment and confirms admission.
+</details>
 
-## Your own project
+## Validators
 
-Put `pocket.json` in the project root and list every file that should enter the build. Paths relative to that root become bundle paths. Run `pocket-miner pack --project DIR`, or invoke the CLI from that directory without `--project`. Both forms require `--base-image-digest` and `--out`. The packer reads the manifest and selected regular files without executing the recipe. Tree projects list prepared dependency files under `node_modules` and declare each name and exact version. [Manifest examples, limits and runtime contract](docs/harness-contract.md)
+The operator evaluates every round and publishes the result. [`validator/`](validator/README.md)
+is a small program that reads that result, checks the champion's registration and UID on chain,
+and sets weights. It previews by default and writes only when you turn writes on. Its README
+states plainly what it verifies and what it takes on trust.
 
-## Contents
+## Repository map
 
-| Location | Purpose |
-| --- | --- |
-| `pocket-miner`, `lib/` | Pack and check source, derive rounds and submission IDs, sign, commit and deliver. |
-| [Public validator](validator/README.md) | Check the published champion on chain, preview the allocation and set weights. |
-| `examples/minimal/` | Editable built-ins-only agent, build recipe and sandbox instructions. |
-| `docs/` | Source and runtime contract, weekly competition and reward rules. |
-| `tests/` | Run `npm test` offline. No wallet, Python SDK, chain or sandbox required. |
-| `scripts/conformance.mjs` | Developer-only platform comparison. Miners can use the kit without this script or a platform checkout. |
+```text
+pocket-miner          the CLI
+lib/                  packing, identifiers, signing, Hugging Face helpers
+examples/minimal/     a complete agent in one file
+docs/                 the Harness contract and the weekly rules
+practice/             a generated practice task set
+validator/            the public validator
+tests/                offline tests: npm test
+```
 
-The minimal example supports cold starts and the checkpoint-and-restore production start used by the weekly eligibility gate. The gate checks four web-agent scenes and one scene after restore. Use the generated practice set to try the research tasks that determine the ranking. [Weekly rules](docs/rules.md) · [Practice set](practice/practice-set.json)
+<div align="center">
+<br>
 
-Developers with a trusted platform Git checkout and its local dependencies can run `npm run conformance -- --platform "$PLATFORM"`. The optional `--baseline "$BASELINE"` compares an external reference project's prepared source tree, in memory, with its own packer. Supply `--base-image-digest "$BASE"` to compare at a deployed image digest. The comparison defaults to the all-zero practice digest. No reference source is distributed with the kit.
+Winning source is public after every cutoff. Read it, beat it.
+
+</div>
