@@ -34,18 +34,18 @@ The gate uses deterministic model replays. Every submission must pass both check
 
 ## Scored tasks
 
-Each round has 24 generated research tasks by default, six in each tier. The operator chooses a live model that answers through the standard model interface. Every eligible submission gets the same tasks, model and budgets. The generator uses the SHA-256 seed `sha256("pocket-weekly-tasks-v1\n" + JSON.stringify([roundId, cutoffBlockHash]))`, with one LF byte after `v1` and compact UTF-8 JSON. The cutoff block hash makes the tasks unknowable before the cutoff and reproducible afterwards.
+Each round has 24 generated research tasks by default, six in each tier. The operator publishes a list of live models, each answering through the standard model interface. Every eligible submission runs the same task set once per model, with the same budgets. The eligibility gate runs once per submission. The generator uses the SHA-256 seed `sha256("pocket-weekly-tasks-v1\n" + JSON.stringify([roundId, cutoffBlockHash]))`, with one LF byte after `v1` and compact UTF-8 JSON. The cutoff block hash makes the tasks unknowable before the cutoff and reproducible afterwards.
 
 | Tier | What the Harness must do | Tool requests per task | Model calls per task | Tokens per task |
 | --- | --- | ---: | ---: | ---: |
-| `single` | Search and read one page for the answer. | 4 | 4 | 100,000 |
-| `distractors` | Find and read the relevant page among misleading results. | 8 | 7 | 200,000 |
-| `multi-hop` | Read two pages and add the two values. | 8 | 7 | 200,000 |
-| `long-page` | Follow the read cursor to find the value further down a page. | 8 | 7 | 200,000 |
+| `single` | Search and read one page for the answer. | 4 | 4 | 16,000 |
+| `distractors` | Find and read the relevant page among misleading results. | 8 | 7 | 20,000 |
+| `multi-hop` | Read two pages and add the two values. | 8 | 7 | 20,000 |
+| `long-page` | Follow the read cursor to find the value further down a page. | 8 | 7 | 48,000 |
 
 The budgets are upper limits. A single-tier task allows 180 seconds and every other tier 300 seconds. Each model call can return at most 1,024 tokens. The final reply must contain only the answer as a decimal whole number. The validator also checks that the required search and page reads actually happened. In a real run, a model claimed it had searched but never called the search tool and earned zero for the task. Make sure the Harness sends the tool requests.
 
-Each passing task earns one point. A wrong answer, missing evidence or an exhausted task budget earns zero for that task alone. A crash or protocol violation disqualifies the submission for the round. Under the default schedule the score is the number of passed tasks divided by 24. The highest positive score wins, with ties going to the earlier commitment.
+Each task passed on each model earns one point. The limits above apply per task and per model. A wrong answer, missing evidence or an exhausted budget earns zero for that task on that model alone. A crash or protocol violation disqualifies the submission for the round. The score is the points earned divided by 24 times the number of models, which is the plain average of the per-model pass rates. The highest positive score wins, with ties going to the earlier commitment.
 
 The operator's generator also produced the practice set. Each entry in `tasks` has a `question` for the model, a search `query`, the search `results` and the `pages` available to read. Compare the final reply with `expectedAnswer`. The `tier` identifies the task type and `budgets` lists its tool, time and model limits. [Practice set](../practice/practice-set.json)
 
