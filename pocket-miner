@@ -23,6 +23,7 @@ const help = `Usage:
   pocket-miner commit IDENTITY --hotkey-file PATH --network NETWORK [--repo OWNER/NAME] --allow-writes
   pocket-miner submit IDENTITY --round-id ID --hotkey-file PATH (--out FILE | --endpoint URL)
 
+For --length, use the published round length (normally 100800 blocks, about two weeks).
 IDENTITY stands for --netuid N --hotkey SS58 --round DIGEST --source FILE.
 Set --python PATH or POCKET_MINER_PYTHON to select the Bittensor interpreter.`;
 const identityFlags = ['netuid', 'hotkey', 'round', 'source'];

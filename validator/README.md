@@ -1,6 +1,6 @@
 # Pocket validator
 
-This validator reads the operator's weekly `pocket-champions-v1` JSON document and gives the current champion's UID the full weight of 65535. Each poll uses a finalized Bittensor block to check the champion's registration and the validator's eligibility. If a check fails, the existing weights stay in place.
+This validator reads the operator's `pocket-champions-v1` JSON results for each round and gives the current champion's UID the full weight of 65535. Each poll uses a finalized Bittensor block to check the champion's registration and the validator's eligibility. If a check fails, the existing weights stay in place.
 
 ## Install and configure
 

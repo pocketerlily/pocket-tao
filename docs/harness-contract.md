@@ -119,7 +119,7 @@ Cluster workers use one-time warm pods. With `POCKET_CLUSTER_ACTIVATION=1`, sign
 
 ## Submission and rejection
 
-The weekly rules define how to derive the round ID and build-record digest. The CLI's `round` returns JSON with a numeric `index` and string `id`, or an error for a pre-start block. `round-digest` reads the original record, substitutes the weekly ID and prints the prefixed digest. The operator's original window and quotas are retained. [Round record and worked example](rules.md)
+The round rules define how to derive the round ID and build-record digest. The CLI's `round` returns JSON with a numeric `index` and string `id`, or an error for a pre-start block. `round-digest` reads the original record, substitutes the round ID and prints the prefixed digest. The operator's original window and quotas are retained. [Round record and worked example](rules.md)
 
 Both delivery forms use the same submission ID. Hash `pocket-submission-v2\n` followed by compact JSON of `[netuid,hotkey,roundDigest,sourceDigest]`. Here `\n` denotes one LF byte and `<hex>` denotes the ID's 64 lowercase hex digits.
 
@@ -127,7 +127,7 @@ Both delivery forms use the same submission ID. Hash `pocket-submission-v2\n` fo
 
 Put the ASCII string `p2:<hex>:OWNER/NAME` in one on-chain Raw field. The repository ID must match `^[A-Za-z0-9][A-Za-z0-9._-]{0,41}/[A-Za-z0-9][A-Za-z0-9._-]{0,95}$`, contain neither `..` nor `--`, and have at most 60 characters including the slash. The whole field fits in 128 bytes.
 
-Upload exactly the canonical source bytes to `pocket/<hex>.json` on branch `main`. The repository may be private until the weekly cutoff. Make it public within `revealBlocks` finalized blocks after the cutoff (default 300, about one hour). Keep the file available while competing or holding the title.
+Upload exactly the canonical source bytes to `pocket/<hex>.json` on branch `main`. The repository may be private until the round cutoff. Make it public within `revealBlocks` finalized blocks after the cutoff (default 300, about one hour). Keep the file available while competing or holding the title.
 
 Validators request `/OWNER/NAME/resolve/main/pocket/<hex>.json` from Hugging Face over HTTPS without credentials or cookies. They follow at most five redirects to the Hub or its allowed Hugging Face subdomains, allow 60 seconds for the entire download and stop if the body exceeds the 36 MiB source limit. The downloaded bytes must pass the canonical checks above, including format-specific limits. The base image must match the round record for the commitment's inclusion block. Using the subnet, committing hotkey, that round's digest and the SHA-256 of the downloaded bytes must reproduce the committed ID.
 

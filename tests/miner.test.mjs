@@ -15,7 +15,7 @@ const example = join(kit, 'examples/minimal');
 const zero = 'sha256:' + '0'.repeat(64);
 const hotkey = '5CaypP6WQssk1JX2ouPkex2EPDwn3X2rv8MEU8juScA6aoqn';
 const golden = 'sha256:2a711a4383ad83e1c5ca55456313977ba74055d8fdd25af18ee87766d2cde5e2';
-const week2 = 'sha256:731a12db45987c9f3cd29ed1663d35dea3f7fc41d8041abbb5a92337c9913abc';
+const week2 = 'sha256:1b2ec6531cec24bf520d771449de9204eaa86b25e01abab6be2b30168c8eeb4f';
 const hash = value => 'sha256:' + createHash('sha256').update(value).digest('hex');
 const cli = (args, cwd = kit) => spawnSync(join(kit, 'pocket-miner'), args, { cwd, encoding: 'utf8' });
 
@@ -93,18 +93,18 @@ test('explicit files stay inside the project, including through directories', as
 });
 
 test('round CLI matches the worked example, including both sides of the cutoff', () => {
-  const flags = ['round', '--network', 'test', '--netuid', '1', '--start', '12345', '--length', '50400', '--block'];
-  assert.deepEqual(JSON.parse(cli([...flags, '113145']).stdout), { index: 2, id: week2 });
-  assert.equal(JSON.parse(cli([...flags, '113144']).stdout).index, 1);
+  const flags = ['round', '--network', 'test', '--netuid', '1', '--start', '12345', '--length', '100800', '--block'];
+  assert.deepEqual(JSON.parse(cli([...flags, '213945']).stdout), { index: 2, id: week2 });
+  assert.equal(JSON.parse(cli([...flags, '213944']).stdout).index, 1);
   assert.equal(JSON.parse(cli([...flags, '12345']).stdout).index, 0);
   assert.match(cli([...flags, '12344']).stderr, /not started/);
   assert.throws(() => weeklyRound('test', 1, 0, 0, 1));
-  assert.notEqual(weeklyRound('TEST', 1, 12345, 50400, 113145).id, week2);
+  assert.notEqual(weeklyRound('TEST', 1, 12345, 100800, 213945).id, week2);
 });
 
 test('round-digest substitutes only the ID and orders the published fields', async t => {
   const dir = await temp(t);
-  const record = { id: weeklyRound('test', 1, 12345, 50400, 12345).id, baseImageDigest: zero,
+  const record = { id: weeklyRound('test', 1, 12345, 100800, 12345).id, baseImageDigest: zero,
     rootfsDigest: hash('rootfs'), environmentDigest: hash('environment'),
     opensAt: 10, closesAt: 20, maxSubmissions: 3, maxPerMiner: 2 };
   const file = join(dir, 'round.json');

@@ -2,7 +2,7 @@
 
 Edit the system message or the tool menu in `harness.mjs` to try a different strategy. The worker runs this module inside its guest. For each user message it asks the session's model for an answer or a tool call. On a trust errand it checks the cited passage, the draft's approval or the delivery receipt before reporting the result. The build recipe copies this one module to the filename provided by the flat build driver. [Trust errands](../../docs/trust.md)
 
-This example supports cold starts and single-host production starts. The weekly eligibility gate requires all four web-agent scenes to pass and one scene to run after checkpoint, restore and activation. Use the operator's practice set to try the scored research tasks. [Weekly rules](../../docs/rules.md) · [Practice set](../../practice/practice-set.json)
+This example supports cold starts and single-host production starts. Each round's eligibility gate requires all four web-agent scenes to pass and one scene to run after checkpoint, restore and activation. Use the operator's practice set to try the scored research tasks. [Round rules](../../docs/rules.md) · [Practice set](../../practice/practice-set.json)
 
 ## Run in the platform sandbox
 

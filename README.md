@@ -6,12 +6,12 @@
 
 **An open RSI loop for agent harnesses.**
 
-Miners compete every week to build the best Engine for personal AI agents.<br>
+Miners compete in two-week rounds to build the best Engine for personal AI agents.<br>
 One champion takes all miner emission, and becomes the baseline everyone has to beat.
 
 [![Bittensor](https://img.shields.io/badge/Bittensor-subnet_26-111111?style=flat-square)](https://usepocket.fun/docs/how-the-subnet-works)
 [![Network](https://img.shields.io/badge/network-mainnet-111111?style=flat-square)](#round-parameters)
-[![Round](https://img.shields.io/badge/round-1_week-ff7a1a?style=flat-square)](docs/rules.md)
+[![Round](https://img.shields.io/badge/round-2_weeks-ff7a1a?style=flat-square)](docs/rules.md)
 [![Reward](https://img.shields.io/badge/reward-winner_takes_all-ff7a1a?style=flat-square)](docs/rules.md#who-gets-paid)
 [![Node](https://img.shields.io/badge/node-%E2%89%A5_24.13-111111?style=flat-square)](#quick-start)
 [![License](https://img.shields.io/badge/license-MIT-111111?style=flat-square)](LICENSE)
@@ -28,14 +28,14 @@ Pocket is a desktop app where every agent has its own cloud computer. The part t
 *how an agent works* — what to ask the model, which tool to call next, what to remember, when to
 stop — is a replaceable program called the **Harness**. Users see it as the agent's **Engine**.
 
-This repository is everything a miner needs to write one, pack it, and enter the weekly round.
+This repository is everything a miner needs to write one, pack it, and enter a round.
 
 ```mermaid
 flowchart LR
     A([Write a Harness]) --> B[Pack and check]
     B --> C[(Private Hugging Face repo)]
     C --> D{{Commit on chain}}
-    D --> E[/Weekly cutoff/]
+    D --> E[/Round cutoff/]
     E --> F[Reveal]
     F --> G[[Gate, then scored tasks]]
     G --> H([Champion])
@@ -46,15 +46,15 @@ flowchart LR
 > Miners submit **source code only**. There is no compute to rent and nothing to keep online:
 > the validator builds and runs your Harness in its own sandbox.
 
-## The week at a glance
+## A round at a glance
 
 | | When | What happens |
 | :-: | --- | --- |
 | **1** | Any time before the cutoff | Commit your submission on chain. Your latest commitment at the cutoff is the one that counts, and it carries over to later rounds until you replace it. |
-| **2** | Cutoff, every 50,400 blocks | The list of entrants is frozen. The task set is derived from the cutoff block's hash, so nobody can know the tasks beforehand. |
+| **2** | Cutoff, every 100,800 blocks | The list of entrants is frozen. The task set is derived from the cutoff block's hash, so nobody can know the tasks beforehand. |
 | **3** | Within 300 blocks after it (~1 hour) | Make your repository public. The validator downloads the file and checks it against your commitment. |
 | **4** | Evaluation | Eligibility gate first, then the scored tasks on every published model. |
-| **5** | Settlement | Highest score above zero wins. Ties go to the earlier commitment. The champion receives all miner emission for the following week. |
+| **5** | Settlement | Highest score above zero wins. Ties go to the earlier commitment. The champion receives all miner emission for the following round. |
 
 ## Scoring
 
@@ -171,9 +171,9 @@ slash included). Set `HOTKEY` to your registered sr25519 address and `BLOCK` to 
 you expect the commitment to land.
 
 ```bash
-WEEK=$(./pocket-miner round --network "$NETWORK" --netuid "$NETUID" \
+ROUND=$(./pocket-miner round --network "$NETWORK" --netuid "$NETUID" \
   --start "$START" --length "$LENGTH" --block "$BLOCK")
-ROUND_ID=$(node -p 'JSON.parse(process.argv[1]).id' "$WEEK")
+ROUND_ID=$(node -p 'JSON.parse(process.argv[1]).id' "$ROUND")
 ROUND_DIGEST=$(./pocket-miner round-digest --round-zero "$ROUND_ZERO" --round-id "$ROUND_ID")
 identity=(--netuid "$NETUID" --hotkey "$HOTKEY" --round "$ROUND_DIGEST" --source out/source.json)
 ./pocket-miner publish "${identity[@]}" --repo "$REPO" --out out --upload
@@ -203,7 +203,7 @@ Wallet operations need Python with `bittensor==11.3.2` (`--python PATH`, `POCKET
 
 > [!CAUTION]
 > This replaces your current commitment on the subnet. Nothing is written without
-> `--allow-writes`. Wait for finalization and check the inclusion block: if it crossed a weekly
+> `--allow-writes`. Wait for finalization and check the inclusion block: if it crossed a round
 > cutoff, derive the round for that block, publish under the new ID and commit again.
 
 </details>
@@ -214,7 +214,7 @@ Wallet operations need Python with `bittensor==11.3.2` (`--python PATH`, `POCKET
 | --- | --- |
 | `CHAIN_NETWORK` | `finney` |
 | `NETUID` | `26` |
-| `LENGTH` | `50400` blocks, about one week |
+| `LENGTH` | `100800` blocks, about two weeks |
 | Reveal window | `300` blocks after each cutoff |
 | `NETWORK`, `START`, `ROUND_ZERO` | Published in this repository with round zero |
 | Evaluation models | Published in this repository with round zero |
@@ -243,7 +243,7 @@ executes your build recipe. Projects with dependencies vendor them and declare e
 | `pack` | Build the canonical source bundle from a project. |
 | `check FILE` | Apply the admission checks locally. |
 | `digest FILE` | Print the normalized source digest. |
-| `round`, `round-digest` | Derive the weekly round and its digest. |
+| `round`, `round-digest` | Derive the round ID and build-record digest. |
 | `submission-id` | Preview the ID and commitment. `--repo` selects a Hugging Face commitment. |
 | `publish` | Prepare, and optionally upload, the repository file. |
 | `commit` | Write the commitment on chain. Requires `--allow-writes`. |
@@ -265,7 +265,7 @@ states plainly what it verifies and what it takes on trust.
 pocket-miner          the CLI
 lib/                  packing, identifiers, signing, Hugging Face helpers
 examples/minimal/     a complete agent in one file
-docs/                 the Harness contract and the weekly rules
+docs/                 the Harness contract and the round rules
 practice/             generated practice task sets
 validator/            the public validator
 tests/                offline tests: npm test

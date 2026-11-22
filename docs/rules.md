@@ -1,10 +1,10 @@
-# Weekly miner rounds
+# Miner rounds
 
-During the cold-start phase, one round normally lasts 50,400 blocks, about seven days at 12 seconds per block. The champion takes all miner emissions for the following week. Each weight update has a single target with weight 65,535.
+During the cold-start phase, one round normally lasts 100,800 blocks, about two weeks at 12 seconds per block. The champion takes all miner emissions for the following round. Each weight update has a single target with weight 65,535.
 
 ## Which submission enters
 
-The operator publishes the exact network string, subnet number, first block of round zero `S`, round length `L` and immutable round-zero build record. `S` is an integer from 0 through 4,294,967,295. The default `L` is 50,400. Supported test lengths are 1 through 2,628,000, independent of chain update intervals.
+The operator publishes the exact network string, subnet number, first block of round zero `S`, round length `L` and immutable round-zero build record. `S` is an integer from 0 through 4,294,967,295. The default `L` is 100,800. Supported test lengths are 1 through 2,628,000, independent of chain update intervals.
 
 Before `S` the competition has yet to open. At block `B >= S`, the round index is `floor((B - S) / L)`. Round `r` starts at `S + r*L` and includes all blocks through `C - 1`, where `C = S + (r+1)*L`. Validators wait for finalized height to reach `C`, then read the historical end-of-block snapshot at `C - 1`. A delayed validator uses that same height. Settlement stays pending if that snapshot is unavailable. A commitment included in block `C` belongs to the new round.
 
@@ -14,14 +14,14 @@ Each registered hotkey contributes its current commitment at the snapshot. The c
 
 Use compact JavaScript `JSON.stringify` encoded as UTF-8, decimal integers and no trailing newline. Below, `J` means that encoding, `H` means SHA-256 prefixed with `sha256:` and written in lowercase hex, and `\n` is one LF byte. Preserve the spelling, capitalization and encoding of the published network name.
 
-1. `roundId = H("pocket-weekly-round-v1\n" + J([network,netuid,S,L,r]))`. The array `["test",1,12345,50400,2]` yields `sha256:731a12db45987c9f3cd29ed1663d35dea3f7fc41d8041abbb5a92337c9913abc`.
-2. Copy the published round-zero record, replacing only `id` with `roundId`. Construct its fields in order as `id, baseImageDigest, rootfsDigest, environmentDigest, opensAt, closesAt, maxSubmissions, maxPerMiner`. All three digest fields are prefixed. Times are Unix milliseconds and quotas are integers. Every week retains the published window and quotas. `roundDigest = H("pocket-build-round-v1\n" + J(record))`.
+1. `roundId = H("pocket-weekly-round-v1\n" + J([network,netuid,S,L,r]))`. The array `["test",1,12345,100800,2]` yields `sha256:1b2ec6531cec24bf520d771449de9204eaa86b25e01abab6be2b30168c8eeb4f`.
+2. Copy the published round-zero record, replacing only `id` with `roundId`. Construct its fields in order as `id, baseImageDigest, rootfsDigest, environmentDigest, opensAt, closesAt, maxSubmissions, maxPerMiner`. All three digest fields are prefixed. Times are Unix milliseconds and quotas are integers. Every round retains the published window and quotas. `roundDigest = H("pocket-build-round-v1\n" + J(record))`.
 3. `sourceDigest = H(canonicalSourceBytes)`. Compute `submissionId = H("pocket-submission-v2\n" + J([netuid,hotkey,roundDigest,sourceDigest]))`. Use the 64 lowercase hex digits of this ID as `<hex>` in either delivery form.
 4. For Hugging Face delivery, put `p2:<hex>:OWNER/NAME` on chain as a Raw ASCII field of at most 128 bytes. For direct delivery to an operator queue, put `p1:<hex>` on chain and sign the submit command using the actual build round ID, round digest and exact source bytes. Queue acceptance uses the build record's wall-clock window and quotas. A transaction crossing the cutoff needs an ID for its actual round.
 
 ## Reveal Hugging Face source
 
-Upload the canonical source bytes to `pocket/<hex>.json` on the `main` branch of the committed model repository. You may keep the repository private through the weekly cutoff. Anyone can copy source made public early. After the cutoff, make the repository public within `revealBlocks` finalized blocks (default 300, about one hour). Keep the file publicly available while the submission is competing or holding the title.
+Upload the canonical source bytes to `pocket/<hex>.json` on the `main` branch of the committed model repository. You may keep the repository private through the round cutoff. Anyone can copy source made public early. After the cutoff, make the repository public within `revealBlocks` finalized blocks (default 300, about one hour). Keep the file publicly available while the submission is competing or holding the title.
 
 Validators fetch anonymously and check the canonical bytes and the base image against the original build round. They hash the downloaded bytes and recompute the ID using the subnet, committing hotkey and original round digest. A private or missing file can still be revealed within the window. After the window, a file that remains private or missing disqualifies the submission for that round.
 
@@ -74,7 +74,7 @@ The default infrastructure attempt limit is three, configurable to a positive sa
 
 - Only positive scores can win. Highest score wins, then earliest commitment block, then lowest UID in the cutoff snapshot. Challengers need no minimum margin. Record the winner's hotkey, original submission and score once per round.
 - The previous settled result stays in effect until the new result is ready. The new champion takes effect at the next available weight-update interval. An interval already sent, or with unknown receipt, gets no second send.
-- Before each update, look up the champion hotkey's current UID at the latest finalized snapshot. A new submission during the reward week preserves the title. Once deregistration is observed, the title expires for the rest of that week. A new holder of the old UID cannot inherit it.
+- Before each update, look up the champion hotkey's current UID at the latest finalized snapshot. A new submission during the reward round preserves the title. Once deregistration is observed, the title expires for the rest of that round. A new holder of the old UID cannot inherit it.
 - After an empty round or a round without positive scores, or after the champion deregisters, a configured `emptyRoundUid` receives the full 65,535 weight. Operators should use a registered owner-associated UID. Recycling or burning depends on subnet settings. Without that fallback the validator reports `all_zero` and skips the update.
 
 ## Still undecided

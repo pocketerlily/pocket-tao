@@ -85,15 +85,15 @@ const treeBytes = await packProject(base, treeProject, path => tree.get(path));
 same('vendored packTreeSource bytes', treeBytes, miner.packTreeSource(base, Object.fromEntries(tree), dependencies));
 admission('vendored bundle admitted with matching digests', treeBytes);
 
-const params = ['test', 1, 12345, 50400];
+const params = ['test', 1, 12345, 100800];
 const schedule = oracle.roundSchedule({ network: params[0], netuid: params[1], roundStartBlock: params[2], roundBlocks: params[3] });
-for (const block of [12345, 62744, 62745, 113145]) {
+for (const block of [12345, 113144, 113145, 213945]) {
   const index = oracle.roundIndex(schedule, block);
   assert.deepEqual(weeklyRound(...params, block), { index, id: oracle.buildRoundId(schedule, index) });
 }
-const { id } = weeklyRound(...params, 113145);
-assert.equal(id, 'sha256:731a12db45987c9f3cd29ed1663d35dea3f7fc41d8041abbb5a92337c9913abc');
-pass('weekly index and ID at four block boundaries');
+const { id } = weeklyRound(...params, 213945);
+assert.equal(id, 'sha256:1b2ec6531cec24bf520d771449de9204eaa86b25e01abab6be2b30168c8eeb4f');
+pass('round index and ID at four block boundaries');
 const zero = { id: oracle.buildRoundId(schedule, 0), baseImageDigest: base, rootfsDigest: sha256('root'),
   environmentDigest: sha256('environment'), opensAt: 0, closesAt: 2000000000000, maxSubmissions: 3, maxPerMiner: 1 };
 const round = { ...zero, id }, roundHash = roundDigest(zero, id);
