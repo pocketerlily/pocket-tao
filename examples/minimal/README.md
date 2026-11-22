@@ -1,6 +1,6 @@
 # A single-turn model agent
 
-Edit the system message or the tool menu in `harness.mjs` to try a different strategy. The worker runs this module inside its guest. For each user message it asks the session's model for an answer, executes one requested tool, gives the result back to the model and repeats. All answers come from the model. The build recipe copies this one module to the filename provided by the flat build driver.
+Edit the system message or the tool menu in `harness.mjs` to try a different strategy. The worker runs this module inside its guest. For each user message it asks the session's model for an answer or a tool call. On a trust errand it checks the cited passage, the draft's approval or the delivery receipt before reporting the result. The build recipe copies this one module to the filename provided by the flat build driver. [Trust errands](../../docs/trust.md)
 
 This example supports cold starts and single-host production starts. The weekly eligibility gate requires all four web-agent scenes to pass and one scene to run after checkpoint, restore and activation. Use the operator's practice set to try the scored research tasks. [Weekly rules](../../docs/rules.md) · [Practice set](../../practice/practice-set.json)
 
@@ -44,6 +44,6 @@ Each command should exit 0. Its output directory should contain a `report.json` 
 7. The guest joins tool fragments, waits for the finish event, then sends a typed operation to `/v1/tools/request`. The host authorizes each call.
 8. If the session offers state, `/v1/state/request` provides workspace list, small text reads and writes. The host supplies a revision for subsequent operations.
 9. The assistant call and tool result share a call ID in the next model request. The final step and any step after takeover allow only an answer.
-10. The control reply contains `status` and nonempty `text`. Status is `completed` or `waiting` for user takeover. Channel closure ends the run.
+10. The control reply contains `status` and nonempty `text`. Status is `completed` or `waiting` for the user. A trust errand may also require a `report`. Channel closure ends the run.
 
-The example supports a single tool per model step, buffered model output and one message turn. It omits cluster activation, action-event resumption, approval flows, history/context recovery and compaction, attachments, long-file editing, persistent memory and collaboration. Workspace access requires an enabled state gateway. Neither named evaluation suite supplies one.
+The example supports one model-requested tool per step, buffered model output and one message turn. It omits cluster activation, action-event resumption, history/context recovery and compaction, attachments, long-file editing, persistent memory and collaboration. Workspace access requires an enabled state gateway. Neither named evaluation suite supplies one.

@@ -14,7 +14,7 @@ const kit = fileURLToPath(new URL('../', import.meta.url));
 const example = join(kit, 'examples/minimal');
 const zero = 'sha256:' + '0'.repeat(64);
 const hotkey = '5CaypP6WQssk1JX2ouPkex2EPDwn3X2rv8MEU8juScA6aoqn';
-const golden = 'sha256:424d9901e61b68d35d33754c2f86efa6d38dcef397184f18697108d80156d016';
+const golden = 'sha256:2a711a4383ad83e1c5ca55456313977ba74055d8fdd25af18ee87766d2cde5e2';
 const week2 = 'sha256:731a12db45987c9f3cd29ed1663d35dea3f7fc41d8041abbb5a92337c9913abc';
 const hash = value => 'sha256:' + createHash('sha256').update(value).digest('hex');
 const cli = (args, cwd = kit) => spawnSync(join(kit, 'pocket-miner'), args, { cwd, encoding: 'utf8' });

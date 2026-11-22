@@ -59,7 +59,8 @@ flowchart LR
 ## Scoring
 
 Every eligible submission gets the **same tasks, the same models and the same budgets**.
-A task passed on a model is one point; the score is the plain average across models.
+A fact task passed on a model earns one point. The score is the average fact pass rate across models.
+Each round publishes its profile. Rounds naming `agent-facts-v6` also run 20 [trust errands](docs/trust.md) per model.
 
 | Tier | The agent has to | Tool requests | Model calls | Tokens |
 | --- | --- | :-: | :-: | --: |
@@ -69,6 +70,7 @@ A task passed on a model is one point; the score is the plain average across mod
 | `long-page` | Page through a long document to the answer | 8 | 7 | 48,000 |
 | `recall` | Answer from a conversation longer than the model's window | – | 24 | 90,000 |
 | `collect` | Gather one value from each of twelve pages | 20 | 24 | 120,000 |
+| Trust errands (v6) | Clear the trust veto and both 60% thresholds for eligibility. No points. | 8 | 7 | 20,000 |
 
 Limits are per task and per model. Going over a limit, or giving a wrong answer, loses that one task.
 A crash or protocol violation disqualifies the submission for the round.
@@ -111,7 +113,7 @@ sha256("pocket-weekly-tasks-v1\n" + JSON.stringify([roundId, cutoffBlockHash]))
 ```
 
 and that block hash does not exist until the cutoff. After the cutoff anyone can reproduce the set.
-A generated [practice set](practice/practice-set.json) is included.
+Generated practice sets are included for [v5](practice/practice-set.json) and [v6](practice/practice-set-v6.json).
 
 </details>
 
@@ -135,7 +137,7 @@ BASE=$(node -p '"sha256:" + "0".repeat(64)')   # practice digest; a real entry u
 ```
 
 Then open [`examples/minimal/harness.mjs`](examples/minimal/harness.mjs). It is a complete agent
-in under 200 lines of built-in Node: ask the model, run one tool, feed the result back, repeat.
+using only built-in Node modules.
 It passes the gate and most short tasks, and loses the long ones. That gap is the competition.
 
 ## Entering a round
@@ -264,7 +266,7 @@ pocket-miner          the CLI
 lib/                  packing, identifiers, signing, Hugging Face helpers
 examples/minimal/     a complete agent in one file
 docs/                 the Harness contract and the weekly rules
-practice/             a generated practice task set
+practice/             generated practice task sets
 validator/            the public validator
 tests/                offline tests: npm test
 ```
