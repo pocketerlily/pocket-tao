@@ -5,6 +5,7 @@ import { link, mkdir, open, unlink } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { repoFile, uploadCommand, uploadSource, verifyRemote } from './lib/hugging-face.mjs';
 import { pack } from './lib/pack.mjs';
+import { renderReport } from './lib/report.mjs';
 import { roundDigest, weeklyRound } from './lib/round.mjs';
 import { canonicalSource, checkSource, readRegular, sha256 } from './lib/source.mjs';
 import { postEnvelope, signedSubmission, submissionIdentity } from './lib/submission.mjs';
@@ -14,6 +15,7 @@ const help = `Usage:
   pocket-miner pack [--project DIR] --base-image-digest DIGEST --out FILE
   pocket-miner check FILE
   pocket-miner digest FILE
+  pocket-miner report REPORT.json --out FILE.html [--tasks SET.json]
   pocket-miner round --network NETWORK --netuid N --start S --length L --block B
   pocket-miner round-digest --round-zero FILE --round-id ID
   pocket-miner submission-id --netuid N --hotkey SS58 --round DIGEST --source FILE [--repo OWNER/NAME]
@@ -23,6 +25,7 @@ const help = `Usage:
   pocket-miner commit IDENTITY --hotkey-file PATH --network NETWORK [--repo OWNER/NAME] --allow-writes
   pocket-miner submit IDENTITY --round-id ID --hotkey-file PATH (--out FILE | --endpoint URL)
 
+For --tasks, use the exact task set used for that run.
 For --length, use the published round length (normally 100800 blocks, about two weeks).
 IDENTITY stands for --netuid N --hotkey SS58 --round DIGEST --source FILE.
 Set --python PATH or POCKET_MINER_PYTHON to select the Bittensor interpreter.`;
@@ -34,6 +37,7 @@ const flags = {
   'round-digest': ['round-zero', 'round-id'],
   check: [],
   digest: [],
+  report: ['out', 'tasks'],
   'submission-id': [...identityFlags, 'repo'],
   publish: [...identityFlags, 'repo', 'out', 'upload'],
   'verify-remote': [...identityFlags, 'repo'],
@@ -59,11 +63,17 @@ async function save(path, bytes) {
   }
 }
 
+async function readReportJson(path, label) {
+  const bytes = await readRegular(path, 32 * 1024 * 1024);
+  try { return JSON.parse(bytes); }
+  catch { throw Error('Invalid ' + label + ' JSON'); }
+}
+
 async function main([command, ...args]) {
   if (!command || command === '--help' || command === 'help') return console.log(help);
   if (!Object.hasOwn(flags, command)) throw Error('Unknown command. See --help');
   const options = Object.fromEntries(flags[command].map(key => [key, { type: ['allow-writes', 'upload'].includes(key) ? 'boolean' : 'string' }]));
-  const { values, positionals } = parseArgs({ args, options, allowPositionals: command === 'digest' || command === 'check' });
+  const { values, positionals } = parseArgs({ args, options, allowPositionals: ['digest', 'check', 'report'].includes(command) });
   const need = key => requireValue(values, key);
   if (command === 'pack') {
     const path = need('out');
@@ -75,6 +85,14 @@ async function main([command, ...args]) {
     if (positionals.length !== 1) throw Error('Provide one source file');
     const bytes = await readRegular(positionals[0]);
     return console.log(command === 'check' ? checkSource(bytes) : sha256(canonicalSource(bytes)));
+  }
+  if (command === 'report') {
+    if (positionals.length !== 1) throw Error('Provide one report file');
+    const path = need('out');
+    const report = await readReportJson(positionals[0], 'report');
+    const tasks = values.tasks === undefined ? undefined : await readReportJson(need('tasks'), 'task set');
+    await save(path, renderReport(report, { tasks }));
+    return console.log(path);
   }
   if (command === 'round') {
     const numbers = ['netuid', 'start', 'length', 'block'].map(key => {

@@ -117,6 +117,14 @@ Generated practice sets are included for [v5](practice/practice-set.json) and [v
 
 </details>
 
+### Read your self-check as a page
+
+`./pocket-miner report report.json --out report.html`
+
+<img src="assets/report.png" alt="Self-check report page" width="720">
+
+Open the page to see your local score, trust findings and individual cases. To include questions and expected answers, pass the exact task set used for that run with `--tasks SET.json`. A set generated with a different seed can reuse the same case IDs.
+
 ## Quick start
 
 Node 24.13 or newer. Packing, checking and the offline tests need no package installation.
@@ -264,6 +272,7 @@ states plainly what it verifies and what it takes on trust.
 ```text
 pocket-miner          the CLI
 lib/                  packing, identifiers, signing, Hugging Face helpers
+lib/report.mjs        local self-check HTML reports
 examples/minimal/     a complete agent in one file
 docs/                 the Harness contract and the round rules
 practice/             generated practice task sets
