@@ -5,6 +5,7 @@ import { link, mkdir, open, unlink } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { repoFile, uploadCommand, uploadSource, verifyRemote } from './lib/hugging-face.mjs';
 import { pack } from './lib/pack.mjs';
+import { preparePractice } from './lib/practice/report.mjs';
 import { renderReport } from './lib/report.mjs';
 import { roundDigest, weeklyRound } from './lib/round.mjs';
 import { canonicalSource, checkSource, readRegular, sha256 } from './lib/source.mjs';
@@ -16,6 +17,8 @@ const help = `Usage:
   pocket-miner check FILE
   pocket-miner digest FILE
   pocket-miner report REPORT.json --out FILE.html [--tasks SET.json]
+  pocket-miner practice --harness FILE.mjs --tasks SET.json --model-url URL --model NAME[,NAME...] --out DIR
+    [--key-env VAR] [--ids ID,ID] [--limit N] [--concurrency N]
   pocket-miner round --network NETWORK --netuid N --start S --length L --block B
   pocket-miner round-digest --round-zero FILE --round-id ID
   pocket-miner submission-id --netuid N --hotkey SS58 --round DIGEST --source FILE [--repo OWNER/NAME]
@@ -38,6 +41,7 @@ const flags = {
   check: [],
   digest: [],
   report: ['out', 'tasks'],
+  practice: ['harness', 'tasks', 'model-url', 'model', 'out', 'key-env', 'ids', 'limit', 'concurrency'],
   'submission-id': [...identityFlags, 'repo'],
   publish: [...identityFlags, 'repo', 'out', 'upload'],
   'verify-remote': [...identityFlags, 'repo'],
@@ -75,6 +79,35 @@ async function main([command, ...args]) {
   const options = Object.fromEntries(flags[command].map(key => [key, { type: ['allow-writes', 'upload'].includes(key) ? 'boolean' : 'string' }]));
   const { values, positionals } = parseArgs({ args, options, allowPositionals: ['digest', 'check', 'report'].includes(command) });
   const need = key => requireValue(values, key);
+  if (command === 'practice') {
+    const out = need('out');
+    const integer = key => {
+      if (values[key] === undefined) return undefined;
+      if (!/^\d+$/.test(need(key))) throw Error('Invalid --' + key);
+      return Number(values[key]);
+    };
+    const run = await preparePractice({ harness: need('harness'), set: await readReportJson(need('tasks'), 'task set'),
+      modelUrl: need('model-url'), models: need('model').split(','), keyEnv: values['key-env'],
+      ids: values.ids?.split(','), limit: integer('limit'), concurrency: integer('concurrency') });
+    await mkdir(out, { mode: 0o700 });
+    console.error('The harness runs as a normal local process without the sandbox.');
+    console.error('Gate scenes and the build are not checked.');
+    const stop = new AbortController();
+    const interrupt = () => stop.abort();
+    process.on('SIGINT', interrupt);
+    process.on('SIGTERM', interrupt);
+    let report;
+    try { report = await run(row => console.error(row.id, row.model, row.state), stop.signal); }
+    finally {
+      process.off('SIGINT', interrupt);
+      process.off('SIGTERM', interrupt);
+    }
+    await save(join(out, 'report.json'), JSON.stringify(report, null, 2) + '\n');
+    const passes = report.cases.filter(row => row.state === 'passed').length;
+    console.log(`Practice ${report.status}. ${passes}/${report.cases.length} cases passed.`);
+    process.exitCode = { passed: 0, failed: 1, error: 2 }[report.status];
+    return;
+  }
   if (command === 'pack') {
     const path = need('out');
     const bytes = await pack(need('base-image-digest'), values.project);
@@ -155,5 +188,5 @@ main(process.argv.slice(2)).catch(error => {
   const text = error instanceof TypeError ? 'Invalid arguments or transport failure' :
     error.code ? (messages[error.code] ?? 'File or argument error') : error.message;
   console.error(process.argv[2] === 'check' ? 'Source check failed — ' + text : text);
-  process.exitCode = 1;
+  process.exitCode = process.argv[2] === 'practice' ? 2 : 1;
 });

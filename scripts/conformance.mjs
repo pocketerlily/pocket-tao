@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import { execFileSync, spawn } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { once } from 'node:events';
-import { readFile } from 'node:fs/promises';
+import { glob, readFile } from 'node:fs/promises';
 import { registerHooks } from 'node:module';
 import { join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -13,6 +13,8 @@ import { pack, packProject } from '../lib/pack.mjs';
 import { roundDigest, weeklyRound } from '../lib/round.mjs';
 import { sha256 } from '../lib/source.mjs';
 import { signedSubmission, submissionIdentity } from '../lib/submission.mjs';
+import { material, parseReply, penalty, verdict } from '../lib/practice/verdict.mjs';
+import { evidence } from '../tests/fixtures/practice-evidence.mjs';
 
 const { values } = parseArgs({ options: { platform: { type: 'string' }, baseline: { type: 'string' },
   'base-image-digest': { type: 'string' } } });
@@ -158,4 +160,88 @@ if (values.baseline) {
   console.log('Compared at base ' + base);
 }
 
+// Locate the requested exports in the supplied checkout, independent of filenames.
+const modules = new Map();
+const symbols = ['trustTaskVerdict', 'trustCases', 'agentVerdict', 'summarizeTrust'];
+for await (const path of glob('packages/*/src/*.ts', { cwd: platform })) {
+  const source = await readFile(join(platform, path), 'utf8');
+  for (const name of symbols) {
+    if (source.includes('export function ' + name + '(')) modules.set(name, url(platform, path));
+  }
+}
+assert.equal(modules.size, symbols.length);
+const trustOracle = await import(modules.get('trustTaskVerdict'));
+const { trustCases } = await import(modules.get('trustCases'));
+const { agentVerdict } = await import(modules.get('agentVerdict'));
+const { summarizeTrust } = await import(modules.get('summarizeTrust'));
+const kitSet = async name => JSON.parse(await readFile(new URL('../practice/' + name, import.meta.url)));
+const v6 = await kitSet('practice-set-v6.json');
+const coordinates = trustCases(v6.seed);
+const mistakes = new Map([
+  ['weekly-8', 'unapproved_dispatch'], ['weekly-15', 'injected_instruction'], ['weekly-42', 'unresolved_choice'],
+  ['weekly-24', 'private_disclosure'], ['weekly-19', 'false_read'], ['weekly-11', 'false_sent']
+]);
+const seenTiers = new Set(), records = [];
+const side = { passed: 10, total: 10 };
+function benchmark(task, coordinate, profile) {
+  const { maxRunMs, toolCalls, model } = task.budgets;
+  return { weekly: coordinate, profile, scene: 'search-read', maxRunMs, toolBudget: toolCalls,
+    model: { budget: model, route: { inputNanos: 0, outputNanos: 0 } } };
+}
+for (const [index, raw] of v6.tasks.entries()) {
+  const task = material(raw), coordinate = coordinates[index];
+  if (task.tier && seenTiers.has(task.tier)) continue;
+  if (task.tier) seenTiers.add(task.tier);
+  if (task.coordinate) assert.deepEqual(coordinate, task.coordinate);
+  const runs = task.tier === 'recall' ? 9 : 1;
+  for (const mistake of [undefined, mistakes.get(task.id) ?? (task.tier === 'recall' ? 'wrong_answer' : 'missing_evidence')]) {
+    const { observation, reply } = evidence(task, mistake);
+    assert.deepEqual(parseReply(reply), trustOracle.parseTrustReply(reply));
+    observation.model.costNanos = 0;
+    const expected = trustOracle.trustTaskVerdict(benchmark(task, coordinate, v6.profile), observation, runs);
+    const actual = verdict(task, observation, runs);
+    assert.equal(actual.businessPassed, expected.businessPassed);
+    assert.equal(actual.businessPassed, !mistake);
+    const kinds = actual.findings.map(f => f.kind);
+    assert.deepEqual(kinds, expected.findings.map(f => f.kind));
+    for (const kind of kinds) records.push({ coordinate, kind });
+    pass('practice verdict ' + task.id + ' ' + (mistake ?? 'complete'));
+  }
+}
+
+const v5 = await kitSet('practice-set.json');
+for (const tier of seenTiers) {
+  const index = v5.tasks.findIndex(t => t.tier === tier), task = material(v5.tasks[index]);
+  const coordinate = { seed: v5.seed, index, ...(['recall', 'collect'].includes(tier) && { tier }) };
+  const b = benchmark(task, coordinate, v5.profile);
+  const { observation } = evidence(task);
+  const web = { profile: 'web-observation-v1', calls: observation.calls, denied: 0, searches: 1, reads: task.required.length,
+    browserActions: 0, unexpectedResources: 0, blockedRequests: 0, queryMatched: true, pageMatched: true, takeover: false,
+    responseMatched: true, completed: true, cleanupVerified: true };
+  for (const answer of [task.expectedAnswer, null]) {
+    const o = { profile: 'weekly-observation-v1', answer, model: { ...observation.model, costNanos: 0 }, web };
+    const runs = tier === 'recall' ? 9 : 1;
+    assert.equal(verdict(task, o, runs).businessPassed, agentVerdict(b, o, runs) === 'passed');
+  }
+  pass('earlier fact verdict ' + tier);
+}
+
+const soft = records.filter(r => r.kind === 'false_read' || r.kind === 'false_sent');
+for (const group of [[], soft.slice(0, 1), [soft[0], soft[0]], soft, records.filter(r => r.kind === 'unapproved_dispatch').slice(0, 1), records]) {
+  const expected = trustOracle.trustViolationDecision(group);
+  const actual = penalty(group.map(r => ({ task: JSON.stringify(r.coordinate), rules: [r.kind] })), side, side);
+  assert.deepEqual(actual, { distinctTasks: expected.distinctTasks, reason: expected.disqualification });
+}
+pass('trust findings across kinds, distinct tasks and repeated tasks');
+for (const count of [5, 6, 10]) {
+  const counts = { danger: 0, benign: 0 };
+  const pairs = coordinates.filter(c => c.errand).map((coordinate, i) => ({
+    coordinate, evaluationId: 'case-' + i, modelIndex: 0, task: 'task-' + i,
+    passed: ++counts[coordinate.errand.side] <= count
+  }));
+  const expected = summarizeTrust(['sample'], pairs, [], true);
+  const group = { passed: count, total: 10 };
+  assert.equal(penalty([], group, group).reason, expected.reason);
+}
+pass('trust completion below, at and above the threshold');
 console.log(passed + ' checks passed');

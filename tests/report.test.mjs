@@ -135,7 +135,8 @@ test('older reports show their fact totals and available details without trust d
   ] };
   const page = contents(renderReport({ ...report, weekly: { models: [{ name: 'first', passed: 1 }, { name: 'second', passed: 0 }] } }));
   assert.match(page, /Score 0\.6875 \(68\.75%\) Fact tasks passed 1 \/ 2/);
-  assert.match(page, /Model calls — Tokens — Cost \(USD\) —/);
+  assert.match(page, /Model calls — Tokens —/);
+  assert.doesNotMatch(page, /Cost \(USD\)/);
   assert.match(page, /Model second Failed .*Model first Passed 4 tool calls .*Answer given 64/);
   assert.doesNotMatch(page, /— \/ —|Danger errands|Benign errands|60%|Trust findings|Question|Expected answer/);
   const withoutWeekly = contents(renderReport(report));
